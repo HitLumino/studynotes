@@ -12,11 +12,12 @@ git push -u origin master//第一次需要 -u
 2. 添加到暂存区  
 git add . //将全部文件添加到暂存区   
 git add README.txt　//将README.txt添加到暂存区    　　　
-3. git commit -m "commit"  
+3. 将文件添加到分支   
+git commit -m "commit"  
 ![](picture_source/2.png)
-4. 提交到网络
+4. 提交到网络  
 git push origin master  
-5. 从网上pull到本地
+5. 从网上pull到本地  
 git push origin master  
 ## 解除密码输入
 git config --global credential.helper store
