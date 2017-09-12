@@ -9,10 +9,10 @@ git push -u origin master//第一次需要 -u
 ## Git 管理修改
 1. readme.txt 增加图片    
 ![](picture_source/1.png)
-2. 添加到暂存区
+2. 添加到暂存区  
 git add . //将全部文件添加到暂存区   
 git add README.txt　//将README.txt添加到暂存区    　　　
-3. git commit -m "commit"
+3. git commit -m "commit"  
 ![](picture_source/2.png)
 4. 提交到网络
 git push origin master  
