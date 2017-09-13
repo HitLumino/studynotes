@@ -4,7 +4,7 @@ github[github地址](https://github.com/XX-net/XX-Net.git)
 ![](picture_source/XX net XX Net.png)
 =======
 [github地址](https://github.com/XX-net/XX-Net.git)  
-[稳定版下载](https://codeload.github.com/XX-net/XX-Net/zip/3.3.6)  
+[稳定版下载](https://codeload.github.com/XX-net/XX-Net/zip/3.3.6)
 ![](picture_source/XX net XX Net.png)
 
 ----------------------------------------------
