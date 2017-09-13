@@ -4,8 +4,10 @@
 ![](picture_source/XX net XX Net.png)
 ----------------------------------------------
 ## 谷歌配置
-源自[http://blog.csdn.net/yueruitao/article/details/70216799]  
-[http://www.cnblogs.com/LangZXG/p/7141194.html?utm_source=itdadao&utm_medium=referral]  
+源自:
+1. [http://blog.csdn.net/yueruitao/article/details/70216799]  
+2. [http://www.cnblogs.com/LangZXG/p/7141194.html?utm_source=itdadao&utm_medium=referral]  
+
 - [创建AppID](https://console.developers.google.com)  
 
 ![](picture_source/ScienceNet2.png)
@@ -23,7 +25,8 @@
 ## Linux 配置
 在XXnet目录下
 `sudo ./start`
-1. 弹出http://127.0.0.1:8085/页面点击左侧的[部署服务器]粘贴appid，点击[开始部署]（注意谷歌浏览器可能默认阻止弹出式窗口，此处点击网址左侧的感叹号需要允许弹出）（此时需要保证能科学上网，否则可能一直卡在正在部署），在弹出的页面中点击允许。  
+
+1. 弹出页面点击左侧的[部署服务器]粘贴appid，点击[开始部署]（注意谷歌浏览器可能默认阻止弹出式窗口，此处点击网址左侧的感叹号需要允许弹出）（此时需要保证能科学上网，否则可能一直卡在正在部署），在弹出的页面中点击允许。  
 如果是火狐浏览器弹出登陆窗口，最好将网址复制到chrome中。  
 2. 然后点击[配置]，在[GAE AppID]输入id,[保存]。
 2. 打开XX-Net下的SwitchyOmega文件夹，打开谷歌浏览器的扩展程序页面chrome://extensions。把SwitchyOmega.crx文件拖放到浏览器扩展程序页面安装。点击[添加扩展程序]。  
