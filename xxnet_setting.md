@@ -1,12 +1,12 @@
-# github　下载  
+## github下载  
 [github地址](https://github.com/XX-net/XX-Net.git)  
 [稳定版下载](https://codeload.github.com/XX-net/XX-Net/zip/3.3.6)
-![](picture_source/Net.png)
+![](picture_source/XX net XX Net.png)
 ----------------------------------------------
 ## 谷歌配置
 源自:  
-* [http://blog.csdn.net/yueruitao/article/details/70216799] 
-* [http://www.cnblogs.com/LangZXG/p/7141194.html?utm_source=itdadao&utm_medium=referral]  
+(1)[http://blog.csdn.net/yueruitao/article/details/70216799]   
+(2)[http://www.cnblogs.com/LangZXG/p/7141194.html?utm_source=itdadao&utm_medium=referral]  
 
 - [创建AppID](https://console.developers.google.com)  
 
