@@ -1,6 +1,6 @@
 ## github下载  
 [github地址](https://github.com/XX-net/XX-Net.git)  
-[稳定版下载](https://codeload.github.com/XX-net/XX-Net/zip/3.3.6)
+[稳定版下载](https://codeload.github.com/XX-net/XX-Net/zip/3.3.6)  
 ![](picture_source/XX net XX Net.png)
 ----------------------------------------------
 ## 谷歌配置
