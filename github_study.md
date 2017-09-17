@@ -1,4 +1,5 @@
 ## 如何创建一个repository并同步
+在所在目录里建文件夹  
 echo "# studynotes" >> README.md  
 git init  
 git add README.md  
