@@ -67,3 +67,11 @@ git pull --rebase origin master
 6. 把本地库的内容推送到远程，使用 git push命令，实际上是把当前分支master推送到远程。执行此命令后会要求输入用户名、密码，验证通过后即开始上传。
 git push -u origin master
 7. git pull origin master
+## 问题
+lumino@lumino:~/Soft$ git clone git@github.com:strasdat/Sophus.git  
+正克隆到 'Sophus'...  
+Permission denied (publickey).  
+fatal: Could not read from remote repository.  
+
+Please make sure you have the correct access rights 
+and the repository exists.  
