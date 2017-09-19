@@ -1,5 +1,4 @@
 ## ROS在Qt下的配置：
-
 [http://blog.csdn.net/linuxarmsummary/article/details/48476171]
 
 `gedit ~/.local/share/applications/DigiaQt-qtcreator-community.desktop`  
