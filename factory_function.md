@@ -53,6 +53,7 @@ void Config::setParameterFile( const std::string& filename )//公有静态方法
 {
     if ( config_ == nullptr )
         config_ = shared_ptr<Config>(new Config);//内部调用私有构造函数`Config()`,返回对象“config_”的实例，这个实例也在内部定义好了，即静态成员变量  `private static std::shared_ptr<Config> config_;` 
+     //这里体现了什么叫唯一性：如果对象为空，就初始化新的对象；若不为空，即不新建。则始终保持一个对象（只有这个静态方法）  
     config_->file_ = cv::FileStorage( filename.c_str(), cv::FileStorage::READ );
     if ( config_->file_.isOpened() == false )
     {
