@@ -15,3 +15,10 @@ void VisualOdometry::computeDescriptors()
     cout<<"descriptor computation cost time: "<<timer.elapsed()<<endl;
 }
 ```
+# CV_8UC4 ---> CV_8UC3
+I've found that the best way to do this is:  
+
+cvtColor(src,dst,CV_GRAY2RGB);  
+The image will look the same as when it was grayscale CV_8UC1 but it will be a 3 channel image of type CV_8UC3.
+
+
