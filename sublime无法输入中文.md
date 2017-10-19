@@ -20,4 +20,4 @@ $ sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxpl
 $ ~$: sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so  /opt/Qt5.6.0/Tools/QtCreator/lib/Qt/plugins/platforminputcontexts
 ```
 
-
+你好

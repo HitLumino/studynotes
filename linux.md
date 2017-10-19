@@ -28,3 +28,4 @@
 * apt-get -purge remove (删除配置文件)
 * apt-get clean (安装的软件的备份删除)
 * apt-get autoclean 
+
