@@ -69,7 +69,7 @@ git push -u origin master
 7. git pull origin master
 ## 无法上传大文件报错，删除依旧报错
 上传文件过大，取消再次上传，还是报错。关键要撤回那个commit  
-`git log` :可以查看  
+`git log` :可以查看提交日志  
 依次撤销commit   
 `git reset `commit 代号，类似4eb35e831b500b42b860650aa8d04eb6e8d20203   
 * 删除线上文件夹做法：  
