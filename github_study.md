@@ -67,6 +67,15 @@ git pull --rebase origin master
 6. 把本地库的内容推送到远程，使用 git push命令，实际上是把当前分支master推送到远程。执行此命令后会要求输入用户名、密码，验证通过后即开始上传。
 git push -u origin master
 7. git pull origin master
+## 无法上传大文件报错，删除依旧报错
+上传文件过大，取消再次上传，还是报错。关键要撤回那个commit  
+`git log` :可以查看  
+依次撤销commit   
+`git reset `commit 代号，类似4eb35e831b500b42b860650aa8d04eb6e8d20203   
+* 删除线上文件夹做法：  
+`dir`  查看有哪些文件夹  
+`git rm -r --cached target ` 删除target文件夹  
+
 ## 问题
 lumino@lumino:~/Soft$ git clone git@github.com:strasdat/Sophus.git  
 正克隆到 'Sophus'...  
