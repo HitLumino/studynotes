@@ -21,4 +21,12 @@ I've found that the best way to do this is:
 cvtColor(src,dst,CV_GRAY2RGB);  
 The image will look the same as when it was grayscale CV_8UC1 but it will be a 3 channel image of type CV_8UC3.
 
+# Linux下不能进入windows的NTFS分区之挂载错误问题（error mounting）
+* 首先重启电脑,确保`Windows`是`正常关机`.重新进入`Linux``.  
+* 如果还是不能访问硬盘接下来第二步:  
+   * sudo apt-get install ntfs-3g
+   * sudo ntfsfix /dev/sda2
+
+
+
 
