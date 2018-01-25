@@ -16,4 +16,5 @@ Makefile:83: recipe for target 'all' failed
 make: *** [all] Error 2
 ```
 
-
+* [error: ‘shared_ptr’ in namespace ‘std’ does not name a type](https://www.cnblogs.com/foohack/p/3997771.html)
+`set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++0x")`
