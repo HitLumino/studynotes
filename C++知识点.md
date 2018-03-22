@@ -21,6 +21,8 @@
         - [projectPoints](#projectpoints)
         - [图像矫正](#%E5%9B%BE%E5%83%8F%E7%9F%AB%E6%AD%A3)
         - [极线匹配](#%E6%9E%81%E7%BA%BF%E5%8C%B9%E9%85%8D)
+    - [opencv](#opencv)
+        - [特征点相关](#%E7%89%B9%E5%BE%81%E7%82%B9%E7%9B%B8%E5%85%B3)
     - [技巧](#%E6%8A%80%E5%B7%A7)
         - [Qt函数注释技巧](#qt%E5%87%BD%E6%95%B0%E6%B3%A8%E9%87%8A%E6%8A%80%E5%B7%A7)
         - [Qt出现中文编码乱码问题](#qt%E5%87%BA%E7%8E%B0%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98)
@@ -488,7 +490,9 @@ CV_EXPORTS_W void computeCorrespondEpilines( InputArray points, int whichImage,
                                              InputArray F, OutputArray lines );
 ```
 * 输出:lines: ax+by+c=0 (a,b,c),并且a^2+b^2=1
-
+## opencv
+### 特征点相关
+* [keypoint Size and response](https://stackoverflow.com/a/10333506/9279780)
 ## 技巧
 ### Qt函数注释技巧  
 自动生成函数注释  `/** `

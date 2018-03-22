@@ -27,6 +27,7 @@
         - [`isspace()`:判断空格函数](#isspace%E5%88%A4%E6%96%AD%E7%A9%BA%E6%A0%BC%E5%87%BD%E6%95%B0)
     - [21. (696. Count Binary Substrings)](#21-696-count-binary-substrings)
         - [判断连续相同元素的处理](#%E5%88%A4%E6%96%AD%E8%BF%9E%E7%BB%AD%E7%9B%B8%E5%90%8C%E5%85%83%E7%B4%A0%E7%9A%84%E5%A4%84%E7%90%86)
+        - [485. Max Consecutive Ones（3.20）找出最大连续1的个数](#485-max-consecutive-ones%EF%BC%88320%EF%BC%89%E6%89%BE%E5%87%BA%E6%9C%80%E5%A4%A7%E8%BF%9E%E7%BB%AD1%E7%9A%84%E4%B8%AA%E6%95%B0)
     - [22. (477. Total Hamming Distance)](#22-477-total-hamming-distance)
         - [注意>>操作不改变实际值](#%E6%B3%A8%E6%84%8F%E6%93%8D%E4%BD%9C%E4%B8%8D%E6%94%B9%E5%8F%98%E5%AE%9E%E9%99%85%E5%80%BC)
     - [283. Move Zeroes](#283-move-zeroes)
@@ -43,6 +44,8 @@
         - [set的用法](#set%E7%9A%84%E7%94%A8%E6%B3%95)
 - [动态规划(dynamic programming)](#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92dynamic-programming)
     - [1.(397. Integer Replacement)](#1397-integer-replacement)
+- [Backtracing(回溯法)](#backtracing%E5%9B%9E%E6%BA%AF%E6%B3%95)
+    - [78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)](#78-subsets%E6%B1%82%E6%95%B0%E7%BB%84%E9%87%8C%E6%89%80%E6%9C%89%E7%9A%84%E5%AD%90%E9%9B%86bit-manipulationbacktraceiterative213)
 - [位运算、异或的用法（技巧）](#%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E5%BC%82%E6%88%96%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%88%E6%8A%80%E5%B7%A7%EF%BC%89)
     - [超详细位运算用法-leetcode](#%E8%B6%85%E8%AF%A6%E7%BB%86%E4%BD%8D%E8%BF%90%E7%AE%97%E7%94%A8%E6%B3%95-leetcode)
     - [`&` tricks](#tricks)
@@ -68,6 +71,12 @@
         - [226. Invert Binary Tree](#226-invert-binary-tree)
         - [112. Path Sum](#112-path-sum)
 - [报错](#%E6%8A%A5%E9%94%99)
+- [常用算法函数](#%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E5%87%BD%E6%95%B0)
+    - [`std::accumulate`定义于头文件 `<numeric>`](#stdaccumulate%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6-numeric)
+        - [`std::next` 定义于头文件`<iterator>`](#stdnext-%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6iterator)
+        - [`std::multiplies`:乘](#stdmultiplies%E4%B9%98)
+    - [`std::vector::back`](#stdvectorback)
+- [std::bitset::to_string](#stdbitsettostring)
 
 <!-- /TOC -->
 # String 
@@ -184,7 +193,7 @@ Note: The input will be a non-empty word consisting of uppercase and lowercase l
 **code**
 
 ```c
-class Solution {
+* class Solution {
 public:
     bool detectCapitalUse(string word) {
         int m=0;
@@ -1000,6 +1009,45 @@ public:
         
     }
 ```
+
+### 485. Max Consecutive Ones（3.20）找出最大连续1的个数
+
+找出连续1的个数
+
+```
+Input: [1,1,0,1,1,1]
+Output: 3
+Explanation: The first two digits or the last three digits are consecutive 1s.
+    The maximum number of consecutive 1s is 3.
+```
+Note:
+
+The input array will only contain 0 and 1.
+The length of input array is a positive integer and will not exceed 10,000
+
+```c
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int counts=0;
+        priority_queue<int> res;
+        for(int i=0;i<nums.size();i++)
+        {
+            if(nums[i]==1)
+                counts++;
+            else
+            {
+                res.push(counts);
+                counts=0;
+            }
+                
+        }
+        res.push(counts);
+        return res.top();
+    }
+};
+
+```
 ## 22. (477. Total Hamming Distance)
 
 ### 注意>>操作不改变实际值
@@ -1315,6 +1363,91 @@ public:
     }
 };
 ```
+# Backtracing(回溯法)
+
+## 78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)
+
+* Recursive (Backtracking)
+
+   This is a typical problem that can be tackled by backtracking. Since backtracking has a more-or-less similar template, so I do not give explanations for this method.
+    ```c
+    class Solution {
+    public:
+        vector<vector<int>> subsets(vector<int>& nums) {
+            sort(nums.begin(), nums.end());
+            vector<vector<int>> subs;
+            vector<int> sub;  
+            genSubsets(nums, 0, sub, subs);
+            return subs; 
+        }
+        void genSubsets(vector<int>& nums, int start, vector<int>& sub, vector<vector<int>>& subs) {
+            subs.push_back(sub);
+            for (int i = start; i < nums.size(); i++) {
+                sub.push_back(nums[i]);
+                genSubsets(nums, i + 1, sub, subs);
+                sub.pop_back();
+            }
+        }
+    };
+    ```
+* Iterative
+
+    This problem can also be solved iteratively. Take [1, 2, 3] in the problem statement as an example. The process of generating all the subsets is like:
+    ```
+    Initially: [[]]
+    Adding the first number to all the existed subsets: [[], [1]];
+    Adding the second number to all the existed subsets: [[], [1], [2], [1, 2]];
+    Adding the third number to all the existed subsets: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]].
+    ```
+    The code is as follows.
+
+    ```c
+    class Solution {
+    public:
+        vector<vector<int>> subsets(vector<int>& nums) {
+            sort(nums.begin(), nums.end());
+            vector<vector<int>> subs(1, vector<int>());
+            for (int i = 0; i < nums.size(); i++) {
+                int n = subs.size();
+                for (int j = 0; j < n; j++) {
+                    subs.push_back(subs[j]); 
+                    subs.back().push_back(nums[i]);
+                }
+            }
+            return subs;
+        }
+    }; 
+    ```
+* Bit Manipulation
+
+    This is the most clever solution that I have seen. The idea is that to give all the possible subsets, we just need to exhaust all the possible combinations of the numbers. And each number has only two possibilities: either in or not in a subset. And this can be represented using a bit.
+
+    There is also another a way to visualize this idea. That is, if we use the above example, 1 appears once in every two consecutive subsets, 2 appears twice in every four consecutive subsets, and 3 appears four times in every eight subsets, shown in the following (initially the 8 subsets are all empty):
+    ```
+    [], [], [], [], [], [], [], []
+
+    [], [1], [], [1], [], [1], [], [1]
+
+    [], [1], [2], [1, 2], [], [1], [2], [1, 2]
+
+    [], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]
+    ```
+    The code is as follows.
+    ```c
+    class Solution {
+    public:
+        vector<vector<int>> subsets(vector<int>& nums) {
+            sort(nums.begin(), nums.end());
+            int num_subset = pow(2, nums.size()); 
+            vector<vector<int> > res(num_subset, vector<int>());
+            for (int i = 0; i < nums.size(); i++)
+                for (int j = 0; j < num_subset; j++)
+                    if ((j >> i) & 1)
+                        res[j].push_back(nums[i]);
+            return res;  
+        }
+    };
+    ```
 
 # 位运算、异或的用法（技巧）
 
@@ -1501,6 +1634,7 @@ e
 Explanation:
 'e' is the letter that was added.
 ```
+
 
 # 树
 
@@ -1846,6 +1980,7 @@ public:
 };
 ```
 
+
 # 报错
 
 1. [reference binding to null pointer of type 'value_type'](http://blog.csdn.net/m0_38088298/article/details/79249044)
@@ -1855,3 +1990,72 @@ public:
 2. expected unqualified-id before string constant
 * 后来发现，在定义完函数之后，没有加" ; "
 
+# 常用算法函数
+
+##  `std::accumulate`定义于头文件 `<numeric>`
+### `std::next` 定义于头文件`<iterator>`
+
+```c
+int main() 
+{
+    std::vector<int> v{ 3, 1, 4 };
+    auto it = v.begin();
+    auto nx = std::next(it, 2);
+    std::cout << *it << ' ' << *nx << '\n';
+}
+```
+
+### `std::multiplies`:乘
+
+
+* `int sum = std::accumulate(v.begin(), v.end(), 0);`
+* `int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());`
+
+```c
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <string>
+#include <functional>
+ 
+int main()
+{
+    std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+ 
+    int sum = std::accumulate(v.begin(), v.end(), 0);
+ 
+    int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
+ 
+    std::string s = std::accumulate(std::next(v.begin()), v.end(),
+                                    std::to_string(v[0]), // 以首元素开始
+                                    [](std::string a, int b) {
+                                        return a + '-' + std::to_string(b);
+                                    });
+ 
+    std::cout << "sum: " << sum << '\n'
+              << "product: " << product << '\n'
+              << "dash-separated string: " << s << '\n';
+}
+```
+```
+sum: 55
+product: 3628800
+dash-separated string: 1-2-3-4-5-6-7-8-9-10
+```
+## `std::vector::back`
+返回到容器中最后一个元素的引用。
+```c
+#include <vector>
+#include <iostream>
+ 
+int main()
+{
+    std::vector<char> letters {'o', 'm', 'g', 'w', 't', 'f'};
+    if (!letters.empty()) {
+        std::cout << "The last character is: " << letters.back() << '\n';
+    }  
+}
+```
+`The last character is f`
+
+# std::bitset::to_string
