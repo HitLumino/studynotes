@@ -82,6 +82,13 @@ git pull --rebase origin master
 6. 把本地库的内容推送到远程，使用 git push命令，实际上是把当前分支master推送到远程。执行此命令后会要求输入用户名、密码，验证通过后即开始上传。
 git push -u origin master
 7. git pull origin master
+
+## 如何撤销git add
+
+不小心执行了git add . 操作，但是又不能提交所有的文件，因为对应不同的分支，现在怎么样可以将git add 撤销回来
+
+### 解决
+`git reset --mixed`
 ## 无法上传大文件报错，删除依旧报错
 上传文件过大，取消再次上传，还是报错。关键要撤回那个commit  
 `git log` :可以查看提交日志  
