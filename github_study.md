@@ -19,7 +19,7 @@ git commit -m "commit"
 4. 提交到网络  
 git push origin master  
 5. 从网上pull到本地  
-git push origin master  
+git pull origin master  
 ## 解除密码输入
 git config --global credential.helper store
 
@@ -52,6 +52,21 @@ remote: Resolving deltas: 100% (11/11), completed with 3 local objects.
 To https://github.com/HitLumino/studynotes.git  
    e8787df..f98f180  master -> master  
 ```
+## git push时提示：更新被拒绝，因为您当前分支的最新提交落后于其对应的远程分支
+```
+在对本地库中的文件执行修改后，想git push推送到远程库中，结果在git push的时候提示出错：
+
+! [rejected]        master -> master (non-fast-forward)
+error: 无法推送一些引用到 'git@github.com:GarfieldEr007/XXXX.git'
+提示：更新被拒绝，因为您当前分支的最新提交落后于其对应的远程分支。
+提示：再次推送前，先与远程变更合并（如 'git pull ...'）。详见
+提示：'git push --help' 中的 'Note about fast-forwards' 小节。
+```
+
+###解决
+
+因为当前分支的最新提交落后于其对应的远程分支，所以我们先从远程库fetch到更新再和本地库合并，之后就可以git push操作了。
+
 ## 本地新建文件夹，从远程pull
 
 1. （先进入项目文件夹）通过命令 git init 把这个目录变成git可以管理的仓库
