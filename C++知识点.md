@@ -528,3 +528,5 @@ CV_EXPORTS_W void computeCorrespondEpilines( InputArray points, int whichImage,
 [初始化顺序](https://stackoverflow.com/questions/1564937/gcc-warning-will-be-initialized-after)
 
 ### 2. 注释里也不能出现反斜杠
+
+`multi-line comment In file`
