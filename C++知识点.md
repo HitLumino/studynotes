@@ -21,16 +21,13 @@
         - [projectPoints](#projectpoints)
         - [图像矫正](#%E5%9B%BE%E5%83%8F%E7%9F%AB%E6%AD%A3)
         - [极线匹配](#%E6%9E%81%E7%BA%BF%E5%8C%B9%E9%85%8D)
-    - [opencv](#opencv)
-        - [特征点相关](#%E7%89%B9%E5%BE%81%E7%82%B9%E7%9B%B8%E5%85%B3)
-    - [技巧](#%E6%8A%80%E5%B7%A7)
-        - [Qt函数注释技巧](#qt%E5%87%BD%E6%95%B0%E6%B3%A8%E9%87%8A%E6%8A%80%E5%B7%A7)
         - [Qt出现中文编码乱码问题](#qt%E5%87%BA%E7%8E%B0%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98)
         - [Linux下不能进入windows的NTFS分区之挂载错误问题（error mounting）](#linux%E4%B8%8B%E4%B8%8D%E8%83%BD%E8%BF%9B%E5%85%A5windows%E7%9A%84ntfs%E5%88%86%E5%8C%BA%E4%B9%8B%E6%8C%82%E8%BD%BD%E9%94%99%E8%AF%AF%E9%97%AE%E9%A2%98%EF%BC%88error-mounting%EF%BC%89)
         - [单应矩阵](#%E5%8D%95%E5%BA%94%E7%9F%A9%E9%98%B5)
         - [opencv求二范数之和](#opencv%E6%B1%82%E4%BA%8C%E8%8C%83%E6%95%B0%E4%B9%8B%E5%92%8C)
     - [Bugs](#bugs)
         - [1. 类成员变量初始化顺序问题](#1-%E7%B1%BB%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E9%97%AE%E9%A2%98)
+        - [2. 注释里也不能出现反斜杠](#2-%E6%B3%A8%E9%87%8A%E9%87%8C%E4%B9%9F%E4%B8%8D%E8%83%BD%E5%87%BA%E7%8E%B0%E5%8F%8D%E6%96%9C%E6%9D%A0)
 
 <!-- /TOC -->
 # SVO代码解析
@@ -490,7 +487,7 @@ CV_EXPORTS_W void undistortPoints( InputArray src, OutputArray dst,
 ```c
 CV_EXPORTS_W void computeCorrespondEpilines( InputArray points, int whichImage,
                                              InputArray F, OutputArray lines );
-```
+```t
 * 输出:lines: ax+by+c=0 (a,b,c),并且a^2+b^2=1
 ## opencv
 ### 特征点相关
@@ -530,3 +527,4 @@ CV_EXPORTS_W void computeCorrespondEpilines( InputArray points, int whichImage,
 **解决:**   
 [初始化顺序](https://stackoverflow.com/questions/1564937/gcc-warning-will-be-initialized-after)
 
+### 2. 注释里也不能出现反斜杠
