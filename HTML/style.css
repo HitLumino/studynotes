@@ -1,0 +1,30 @@
+p {
+    color: red;
+    font-size: 20px;
+    font-family: Arial；
+  }
+
+.title{
+  color: teal;
+}
+
+.cursive{
+  font-family: cursive;
+}
+.capitalize{
+  text-transform: capitalize;
+}
+
+
+h6.publish-time{
+  color: gray;
+}
+h2.destination{
+  font-family: cursive;
+}
+
+
+h5 {
+  color: rebeccapurple !important;
+  font-family: Georgia;
+}
