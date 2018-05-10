@@ -13,70 +13,79 @@
     - [10. (242. Valid Anagram)](#10-242-valid-anagram)
     - [11. (412. Fizz Buzz)](#11-412-fizz-buzz)
     - [12. (28. Implement strStr())](#12-28-implement-strstr)
-    - [13. (55. 比较字符串-lintcode)](#13-55-%E6%AF%94%E8%BE%83%E5%AD%97%E7%AC%A6%E4%B8%B2-lintcode)
+    - [13. (55. 比较字符串-lintcode)](#13-55--lintcode)
     - [14. (551. Student Attendance Record I)](#14-551-student-attendance-record-i)
     - [15. (459. Repeated Substring Pattern)](#15-459-repeated-substring-pattern)
     - [16. (345. Reverse Vowels of a String)](#16-345-reverse-vowels-of-a-string)
     - [17. (434. Number of Segments in a String)](#17-434-number-of-segments-in-a-string)
-    - [18.(有效的回文字符串)](#18%E6%9C%89%E6%95%88%E7%9A%84%E5%9B%9E%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2)
-        - [`isalnum()``isspace()`:判断是否为字符或数字/空格](#isalnumisspace%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%B8%BA%E5%AD%97%E7%AC%A6%E6%88%96%E6%95%B0%E5%AD%97%E7%A9%BA%E6%A0%BC)
-        - [`toupper()``tolower()`:转换为大/小写(cctype)](#touppertolower%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%A4%A7%E5%B0%8F%E5%86%99cctype)
-    - [19.(214. Shortest Palindrome-如何重整使最小回文)](#19214-shortest-palindrome-%E5%A6%82%E4%BD%95%E9%87%8D%E6%95%B4%E4%BD%BF%E6%9C%80%E5%B0%8F%E5%9B%9E%E6%96%87)
+    - [18.(有效的回文字符串)](#18)
+        - [`isalnum()``isspace()`:判断是否为字符或数字/空格](#isalnumisspace)
+        - [`toupper()``tolower()`:转换为大/小写(cctype)](#touppertolower--cctype)
+    - [19.(214. Shortest Palindrome-如何重整使最小回文)](#19214-shortest-palindrome)
         - [KMP](#kmp)
     - [20. (151 Reverse Words in a String)](#20-151-reverse-words-in-a-string)
-        - [`isspace()`:判断空格函数](#isspace%E5%88%A4%E6%96%AD%E7%A9%BA%E6%A0%BC%E5%87%BD%E6%95%B0)
+        - [`isspace()`:判断空格函数](#isspace)
     - [21. (696. Count Binary Substrings)](#21-696-count-binary-substrings)
-        - [判断连续相同元素的处理](#%E5%88%A4%E6%96%AD%E8%BF%9E%E7%BB%AD%E7%9B%B8%E5%90%8C%E5%85%83%E7%B4%A0%E7%9A%84%E5%A4%84%E7%90%86)
-        - [485. Max Consecutive Ones（3.20）找出最大连续1的个数](#485-max-consecutive-ones%EF%BC%88320%EF%BC%89%E6%89%BE%E5%87%BA%E6%9C%80%E5%A4%A7%E8%BF%9E%E7%BB%AD1%E7%9A%84%E4%B8%AA%E6%95%B0)
+        - [判断连续相同元素的处理](#)
+        - [485. Max Consecutive Ones（3.20）找出最大连续1的个数](#485-max-consecutive-ones3201)
     - [22. (477. Total Hamming Distance)](#22-477-total-hamming-distance)
-        - [注意>>操作不改变实际值](#%E6%B3%A8%E6%84%8F%E6%93%8D%E4%BD%9C%E4%B8%8D%E6%94%B9%E5%8F%98%E5%AE%9E%E9%99%85%E5%80%BC)
+        - [注意>>操作不改变实际值](#)
     - [283. Move Zeroes](#283-move-zeroes)
-        - [`vector`的`remove()`和`fill()`](#vector%E7%9A%84remove%E5%92%8Cfill)
-    - [27. Remove Element(也是remove)](#27-remove-element%E4%B9%9F%E6%98%AFremove)
-    - [451. Sort Characters By Frequency(3/15)](#451-sort-characters-by-frequency315)
-        - [`map`和`unordered_map`区别用法](#map%E5%92%8Cunorderedmap%E5%8C%BA%E5%88%AB%E7%94%A8%E6%B3%95)
-        - [`string1+=string(3, string2)`的用法](#string1string3-string2%E7%9A%84%E7%94%A8%E6%B3%95)
+        - [`vector`的`remove()`和`fill()`](#vectorremovefill)
+    - [27. Remove Element(也是remove)](#27-remove-elementremove)
+    - [451. Sort Characters By Frequency(3/15)](#451-sort-characters-by-frequency3-15)
+        - [`map`和`unordered_map`区别用法](#mapunordered-map)
+        - [`string1+=string(3, string2)`的用法](#string1string3--string2)
     - [347. Top K Frequent Elements](#347-top-k-frequent-elements)
-        - [优先队列的使用(make_pair)](#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E7%9A%84%E4%BD%BF%E7%94%A8makepair)
+        - [优先队列的使用(make_pair)](#make-pair)
     - [692. Top K Frequent Words](#692-top-k-frequent-words)
-        - [优先队列中比较函数的使用](#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E4%B8%AD%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8)
+        - [优先队列中比较函数的使用](#)
     - [23. 532. Third Maximum Number](#23-532-third-maximum-number)
-        - [set的用法](#set%E7%9A%84%E7%94%A8%E6%B3%95)
-- [动态规划(dynamic programming)](#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92dynamic-programming)
+        - [set的用法](#set)
+- [动态规划(dynamic programming)](#dynamic-programming)
     - [1.(397. Integer Replacement)](#1397-integer-replacement)
-- [Backtracing(回溯法)](#backtracing%E5%9B%9E%E6%BA%AF%E6%B3%95)
-    - [78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)](#78-subsets%E6%B1%82%E6%95%B0%E7%BB%84%E9%87%8C%E6%89%80%E6%9C%89%E7%9A%84%E5%AD%90%E9%9B%86bit-manipulationbacktraceiterative213)
-- [位运算、异或的用法（技巧）](#%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E5%BC%82%E6%88%96%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%88%E6%8A%80%E5%B7%A7%EF%BC%89)
-    - [超详细位运算用法-leetcode](#%E8%B6%85%E8%AF%A6%E7%BB%86%E4%BD%8D%E8%BF%90%E7%AE%97%E7%94%A8%E6%B3%95-leetcode)
+- [Backtracing(回溯法)](#backtracing)
+    - [78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)](#78-subsetsbit-manipulation-backtrace-iterative21-3)
+- [位运算、异或的用法（技巧）](#)
+    - [超详细位运算用法-leetcode](#leetcode)
     - [`&` tricks](#tricks)
-        - [1. 191.Number of 1 Bits(位1的个数)](#1-191number-of-1-bits%E4%BD%8D1%E7%9A%84%E4%B8%AA%E6%95%B0)
-        - [2.是否为4的指数 或 2的指数](#2%E6%98%AF%E5%90%A6%E4%B8%BA4%E7%9A%84%E6%8C%87%E6%95%B0-%E6%88%96-2%E7%9A%84%E6%8C%87%E6%95%B0)
-        - [3. 201. Bitwise AND of Numbers Range(难)](#3-201-bitwise-and-of-numbers-range%E9%9A%BE)
+        - [1. 191.Number of 1 Bits(位1的个数)](#1-191number-of-1-bits1)
+        - [2.是否为4的指数 或 2的指数](#24--2)
+        - [3. 201. Bitwise AND of Numbers Range(难)](#3-201-bitwise-and-of-numbers-range)
     - [`^` tricks](#tricks)
         - [1. Sum of Two Integers](#1-sum-of-two-integers)
         - [2. 268.Missing Number](#2-268missing-number)
     - [`|` tricks](#tricks)
-        - [找出小于或等于N的最大2的指数](#%E6%89%BE%E5%87%BA%E5%B0%8F%E4%BA%8E%E6%88%96%E7%AD%89%E4%BA%8En%E7%9A%84%E6%9C%80%E5%A4%A72%E7%9A%84%E6%8C%87%E6%95%B0)
+        - [找出小于或等于N的最大2的指数](#n2)
         - [190.Reverse Bits](#190reverse-bits)
-    - [其他位运算技巧](#%E5%85%B6%E4%BB%96%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7)
+    - [其他位运算技巧](#)
     - [136. Single Number](#136-single-number)
     - [389. Find the Difference](#389-find-the-difference)
-- [树](#%E6%A0%91)
-    - [广度优先搜索(层次遍历)](#%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2%E5%B1%82%E6%AC%A1%E9%81%8D%E5%8E%86)
-        - [111. Minimum Depth of Binary Tree（找二叉树的最小深度）](#111-minimum-depth-of-binary-tree%EF%BC%88%E6%89%BE%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6%EF%BC%89)
+    - [80. Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array-ii)
+- [二分查找](#)
+    - [349. Intersection of Two Arrays(交集)](#349-intersection-of-two-arrays)
+        - [学习`set`和`unordered_set`的`初始化`与`插入`。](#setunordered-set)
+    - [350. Intersection of Two Arrays II](#350-intersection-of-two-arrays-ii)
+    - [167. Two Sum II - Input array is sorted](#167-two-sum-ii---input-array-is-sorted)
+    - [744. Find Smallest Letter Greater Than Target](#744-find-smallest-letter-greater-than-target)
+    - [153. 寻找旋转排序数组中的最小值](#153)
+    - [33. Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
+- [树](#)
+    - [广度优先搜索(层次遍历)](#)
+        - [111. Minimum Depth of Binary Tree（找二叉树的最小深度）](#111-minimum-depth-of-binary-tree)
         - [104. Maximum Depth of Binary Tree](#104-maximum-depth-of-binary-tree)
         - [111. Minimum Depth of Binary Tree](#111-minimum-depth-of-binary-tree)
-        - [102. Binary Tree Level Order Traversal(二叉树的层序遍历)](#102-binary-tree-level-order-traversal%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86)
-            - [`vector`的`reserve`用法，](#vector%E7%9A%84reserve%E7%94%A8%E6%B3%95%EF%BC%8C)
+        - [102. Binary Tree Level Order Traversal(二叉树的层序遍历)](#102-binary-tree-level-order-traversal)
+            - [`vector`的`reserve`用法，](#vectorreserve)
         - [226. Invert Binary Tree](#226-invert-binary-tree)
         - [112. Path Sum](#112-path-sum)
-- [报错](#%E6%8A%A5%E9%94%99)
-- [常用算法函数](#%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E5%87%BD%E6%95%B0)
-    - [`std::accumulate`定义于头文件 `<numeric>`](#stdaccumulate%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6-numeric)
-        - [`std::next` 定义于头文件`<iterator>`](#stdnext-%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6iterator)
-        - [`std::multiplies`:乘](#stdmultiplies%E4%B9%98)
-    - [`std::vector::back`](#stdvectorback)
-- [std::bitset::to_string](#stdbitsettostring)
+- [报错](#)
+- [常用算法函数](#)
+    - [`std::accumulate`定义于头文件 `<numeric>`](#std--accumulate-numeric)
+        - [`std::next` 定义于头文件`<iterator>`](#std--next-iterator)
+        - [`std::multiplies`:乘](#std--multiplies)
+    - [`std::vector::back`](#std--vector--back)
+- [std::bitset::to_string](#std--bitset--to-string)
 
 <!-- /TOC -->
 # String 
@@ -1634,6 +1643,360 @@ e
 Explanation:
 'e' is the letter that was added.
 ```
+## 80. Remove Duplicates from Sorted Array II
+给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素最多出现两次，返回移除后数组的新长度。
+
+不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
+
+```
+给定 nums = [1,1,1,2,2,3],
+
+函数应返回新长度 length = 5, 并且原数组的前五个元素被修改为 1, 1, 2, 2, 3 。
+
+你不需要考虑数组中超出新长度后面的元素。
+```
+```c++
+//c++
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if(nums.size()<3)
+            return nums.size();
+        if(nums.empty())
+            return 0;
+        for(int i=0;i<nums.size()-2;i++)
+        {
+            if(nums[i]==nums[i+1]&&nums[i+1]==nums[i+2])
+            {
+                nums.erase(nums.begin()+i);
+                i--;
+            }
+        }
+        return nums.size();
+        
+    }
+};
+```
+# 二分查找
+一般都是排好序，题目中暗含了这一信息。
+
+## 349. Intersection of Two Arrays(交集)
+### 学习`set`和`unordered_set`的`初始化`与`插入`。
+给定两个数组，写一个函数来计算它们的交集。
+
+例子:
+
+ 给定 num1= [1, 2, 2, 1], nums2 = [2, 2], 返回 [2].
+ ```c++
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res;
+        res.reserve(nums1.size());
+        unordered_set<int> set1(nums1.begin(),nums1.end());
+        unordered_set<int> set2(nums2.begin(),nums2.end());
+        // for(int m:nums1)
+        //     set1.insert(m);
+        // for(int m:nums2)
+        //     set2.insert(m);
+        if(set1.empty()||set2.empty())
+            return res;
+        for(int m:set1)
+        {
+            if(set2.find(m)!=set2.end())
+                res.push_back(m);
+        }
+        return res;      
+    }
+};
+ ```
+
+ ```java
+ //java
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        Set<Integer> set1=new HashSet<Integer>();
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        for(int m:nums1) set1.add(m);
+        for(int m:nums2){
+            if(set1.contains(m))
+                res.add(m);
+            set1.remove(m);
+        }
+        // Convert ArrayList to array
+        int[] arr = new int[res.size()];
+        for (int i= 0; i < res.size(); i++) arr[i] = res.get(i);
+        return arr; 
+    }
+}
+ ```
+
+ ```java
+ //java
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+       Set<Integer> set1 = new HashSet<>();
+		Set<Integer> set = new HashSet<>();
+		for(int i:nums1) {
+			set1.add(i);
+		}
+		for(int j = 0 ; j<nums2.length;j++) {
+			int target = nums2[j];
+			if(set1.contains(target)) {set.add(target);}
+		}
+		int num1[] = new int[set.size()];
+		int k = 0;
+		for(int m:set) {
+			num1[k++] = m ;
+			}
+		 return num1;
+    }
+}
+ ```
+
+## 350. Intersection of Two Arrays II
+Example:
+Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2, 2].
+
+```c
+class Solution {
+public:
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res;
+        //res.reserve(nums1.size());
+        unordered_map<int,int> map;
+        // if(nums1.empty()||nums2.empty())
+        //     return res;
+        for(int m:nums1)
+            map[m]++;
+        for(int m:nums2){
+            if(map[m]!=0){
+                res.push_back(m);
+                map[m]--;
+            }   
+        }
+        return res;      
+    }
+};
+```
+## 167. Two Sum II - Input array is sorted
+给定一个**已按照升序排列**的有序数组，找到两个数使得它们相加之和等于目标数。
+
+函数应该返回这两个下标值 index1 和 index2，其中 index1 必须小于 index2。
+
+返回的下标值（index1 和 index2）不是从零开始的。
+
+```c++
+vector<int> twoSum(vector<int> &numbers, int target) {
+       vector<int> res;
+       if(numbers.size()<2) return res;
+       int left=0; int right=numbers.size()-1;
+       while(left<right)
+       {
+           if(numbers[left]+numbers[right]==target)
+           {
+               res.push_back(left+1);
+               res.push_back(right+1);
+               break;
+           }
+           else if(numbers[left]+numbers[right]<target)
+           {
+               left++;
+           }
+           else
+               right--;
+       }
+       return res;
+   }
+```
+```java
+//java
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int[] res=new int[2];
+        if(numbers.length<2) return res;
+        int left=0; int right=numbers.length-1;
+        while(left<right){
+            if(numbers[left]+numbers[right]==target){
+                res[0]=left+1;
+                res[1]=right+1;
+                break;
+            }
+            else if(numbers[left]+numbers[right]<target)
+                left++;
+            else
+                right--;      
+        }
+        return res;
+    }
+}
+```
+## 744. Find Smallest Letter Greater Than Target
+Given a list of **sorted** characters letters containing only lowercase letters, and given a target letter target, find the smallest element in the list that is larger than the given target.
+
+Letters also wrap around. For example, if the target is target = 'z' and letters = ['a', 'b'], the answer is 'a'.
+
+* 需要注意的点就是区间位置，既然A[l]不等于A[mid]，下一次肯定不是从l这个位置开始找的，而是以l+1作为下一个起始位置，或者l-1作为下一个开始位置
+
+```java
+class Solution {
+    public char nextGreatestLetter(char[] a, char x) {
+        int n=a.length;
+        if(x>=a[n-1])
+            return a[0];
+        else x++;
+        int l=0; int r=n-1;
+        while(l<r){
+            int mid =l+(r-l)/2;
+            if(a[mid]>x)
+                r=mid;
+            else if(a[mid]<x)
+                l=mid+1;//注意！
+            else 
+                return a[mid];
+        }
+        //return a[l];
+         return a[r];
+    }
+}
+```
+## 153. 寻找旋转排序数组中的最小值
+
+假设按照升序排序的数组在预先未知的某个点上进行了旋转。
+
+( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。
+
+请找出其中最小的元素。
+
+你可以假设数组中不存在重复元素。
+```
+示例 1:
+
+输入: [3,4,5,1,2]
+输出: 1
+示例 2:
+
+输入: [4,5,6,7,0,1,2]
+输出: 0
+```
+```c++
+class Solution {
+public:
+     int findMin(vector<int>& nums) {
+        if(nums.size()==1) return nums[0];
+        int i=1;
+        for(;i<nums.size();i++)
+        {
+            if(nums[i]-nums[i-1]<0)
+                return nums[i]; 
+        }
+        if(i==nums.size())
+            return nums[0]; 
+     }
+    
+      int findMin(vector<int>& nums) {   
+         int l=0;int r=nums.size()-1;
+         while(l<r)
+         {
+             //终结条件
+             if(nums[l]<nums[r])
+                return nums[l];
+             int mid=(l+r)/2;
+             //若l=mid;  当l=2,r=3的时候，mid=2；->l=2,mid=2。陷入死循环
+             if(nums[mid]>=nums[l]) //必须有等于，否则跳不出while
+                 l=mid+1;
+             else r=mid;    
+         }
+         return nums[l];
+     }
+};
+```
+## 33. Search in Rotated Sorted Array
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+Example 1:
+
+Input: nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+Example 2:
+
+Input: nums = [4,5,6,7,0,1,2], target = 3
+Output: -1
+
+```c++
+class Solution {
+public:
+	int search(vector<int>& nums, int target) {
+		int end = nums.size() - 1;
+        if(nums.size()==1)
+            return nums[0]==target?0:-1;
+		int min = findpivot(nums);
+
+		if (min == 0)
+			return findtarget(nums, 0, end, target);
+		else if (target <= nums[min - 1] && target >= nums[0])
+			return findtarget(nums, 0, min-1, target);
+		else if (target <= nums[end] && target >= nums[min])
+			return findtarget(nums, min, end, target);
+		else return -1;
+
+	}
+private:
+	int findpivot(vector<int>& nums){
+		int l = 0;
+		int r = nums.size() - 1;
+		while (l < r)
+		{
+			int mid = (l + r) / 2;
+			if (nums[l] < nums[r])
+				return l;
+			if (nums[mid] >= nums[l])
+				l = mid + 1;
+			else
+				r = mid;
+		}
+		return l;
+	}
+	int findtarget(vector<int>& nums, int left, int right, int target){
+		int l = left;
+		int r = right;
+		while (l<=r){
+			int mid = (l + r) / 2;
+			if (target == nums[mid])
+				return mid;
+			if (target>nums[mid])
+				l = mid + 1;
+			else
+				r = mid-1;
+		}
+		return -1;
+
+
+	}
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # 树

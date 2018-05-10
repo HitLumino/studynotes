@@ -28,6 +28,7 @@
     - [Bugs](#bugs)
         - [1. 类成员变量初始化顺序问题](#1-%E7%B1%BB%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F%E9%97%AE%E9%A2%98)
         - [2. 注释里也不能出现反斜杠](#2-%E6%B3%A8%E9%87%8A%E9%87%8C%E4%B9%9F%E4%B8%8D%E8%83%BD%E5%87%BA%E7%8E%B0%E5%8F%8D%E6%96%9C%E6%9D%A0)
+        - [C++程序信号报错](#c%E7%A8%8B%E5%BA%8F%E4%BF%A1%E5%8F%B7%E6%8A%A5%E9%94%99)
 
 <!-- /TOC -->
 # SVO代码解析
@@ -530,3 +531,39 @@ CV_EXPORTS_W void computeCorrespondEpilines( InputArray points, int whichImage,
 ### 2. 注释里也不能出现反斜杠
 
 `multi-line comment In file`
+
+### C++程序信号报错
+```
+#define SIGHUP 1 /* hangup */
+#define SIGINT 2 /* interrupt */
+#define SIGQUIT 3 /* quit */
+#define SIGILL 4 /* illegal instruction (not reset when caught) */
+#define SIGTRAP 5 /* trace trap (not reset when caught) */
+#define SIGABRT 6 /* abort() */
+#if defined(_POSIX_C_SOURCE)
+#define SIGPOLL 7 /* pollable event ([XSR] generated, not supported) */
+#else /* !_POSIX_C_SOURCE */
+#define SIGIOT SIGABRT /* compatibility */
+#define SIGEMT 7 /* EMT instruction */
+#endif /* !_POSIX_C_SOURCE */
+#define SIGFPE 8 /* floating point exception */
+#define SIGKILL 9 /* kill (cannot be caught or ignored) */
+#define SIGBUS 10 /* bus error */
+#define SIGSEGV 11 /* segmentation violation */
+#define SIGSYS 12 /* bad argument to system call */
+#define SIGPIPE 13 /* write on a pipe with no one to read it */
+#define SIGALRM 14 /* alarm clock */
+#define SIGTERM 15 /* software termination signal from kill */
+#define SIGURG 16 /* urgent condition on IO channel */
+#define SIGSTOP 17 /* sendable stop signal not from tty */
+#define SIGTSTP 18 /* stop signal from tty */
+#define SIGCONT 19 /* continue a stopped process */
+#define SIGCHLD 20 /* to parent on child stop or exit */
+#define SIGTTIN 21 /* to readers pgrp upon background tty read */
+#define SIGTTOU 22 /* like TTIN for output if (tp->t_local&LTOSTOP) */
+#if !defined(_POSIX_C_SOURCE)
+#define SIGIO 23 /* input/output possible signal */
+#endif
+#define SIGXCPU 24 /* exceeded CPU time limit */
+#define SIGXFSZ 25 /* exceeded file size limit */
+```
