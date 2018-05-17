@@ -16,13 +16,17 @@ find_package(catkin REQUIRED COMPONENTS
   tf
 )
 
+
+catkin_package(
+  
+)
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
   "/usr/include/eigen3/"
 )
 
-
-add_executable(marker_detect src/marker_detect.cpp)
-target_link_libraries(marker_detect  ${catkin_LIBRARIES}
+add_executable(${PROJECT_NAME}_node src/marker_detect.cpp)
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES}
 ${OpenCV_LIBS} 
 libARToolKitPlus.so)
