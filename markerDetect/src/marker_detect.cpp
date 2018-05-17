@@ -17,9 +17,14 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/image_encodings.h>
 
+#include <Eigen/Eigen>
+#include <Eigen/Geometry>
+#include <Eigen/Core>
+
 #define pi 3.1415926
 
 using ARToolKitPlus::TrackerSingleMarker;
+using namespace Eigen;
 
 geometry_msgs::PoseStamped pose_msg;
 
@@ -206,14 +211,21 @@ void chatterCallback(const sensor_msgs::ImageConstPtr& msg)//一旦收到传感�
        printf("%10.3f  %s", tracker->getModelViewMatrix()[i], (i % 4 == 3) ? "\n" : "");
 
    //rotToEular_angle(tracker->getModelViewMatrix(),eular);
+   Matrix3f R=Matrix3f::Identity();
+
+   R<<tracker->getModelViewMatrix()[0],tracker->getModelViewMatrix()[1],tracker->getModelViewMatrix()[2],
+      tracker->getModelViewMatrix()[4],tracker->getModelViewMatrix()[5],tracker->getModelViewMatrix()[6],
+      tracker->getModelViewMatrix()[8],tracker->getModelViewMatrix()[9],tracker->getModelViewMatrix()[10];
+   Quaternionf Q;
+   Q=R;
    pose_msg.header.stamp=ros::Time::now();
    pose_msg.pose.position.x=tracker->getModelViewMatrix()[12];
    pose_msg.pose.position.y=tracker->getModelViewMatrix()[13];
    pose_msg.pose.position.z=tracker->getModelViewMatrix()[14];
-   pose_msg.pose.orientation.x=0;
-   pose_msg.pose.orientation.y=0;
-   pose_msg.pose.orientation.z=0;
-   pose_msg.pose.orientation.w=1;
+   pose_msg.pose.orientation.x=Q.x();
+   pose_msg.pose.orientation.y=Q.y();
+   pose_msg.pose.orientation.z=Q.z();
+   pose_msg.pose.orientation.w=Q.w();
    ROS_INFO("position_x= %lf=position_x",pose_msg.pose.position.x);
    ROS_INFO("position_y= %lf=position_y",pose_msg.pose.position.y);
 }
@@ -226,7 +238,7 @@ int main(int argc, char **argv){
   tracker= new TrackerSingleMarker (IMG_WIDTH,IMG_HEIGHT, 8, 6, 6, 6, 0);
   tracker->setPixelFormat(ARToolKitPlus::PIXEL_FORMAT_LUM);  //其实就是灰度图的格式
 
-  if (!tracker->init("/home/lumino/catkin_ws/src/markerDetect/camera.cal", 1.0f, 1000.0f)) // load MATLAB file
+  if (!tracker->init("/home/lumino/catkin_orb/src/markerDetect/camera.cal", 1.0f, 1000.0f)) // load MATLAB file
   {
       printf("ERROR: init() failed\n");
       return -1;
@@ -235,7 +247,7 @@ int main(int argc, char **argv){
   tracker->getCamera()->printSettings();
 
   //整个二维码到宽度（整个大的markwr边框边长为2.0）;
-  tracker->setPatternWidth(78); //78.0
+  tracker->setPatternWidth(100); //78.0
   //这里应该是白色条码外边的黑色边框宽度，宽编码为0.125,即整个（默认2）的八分之一
   //而简单编码的形式又有标准的（0.25）和小型的（0.125）
   tracker->setBorderWidth(USEBCH ? 0.125 : 0.25);

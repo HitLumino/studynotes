@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(markerDetect)
+project(marker_detect)
 
 
 find_package(OpenCV 3.1 REQUIRED)
@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  "/usr/include/eigen3/"
 )
 
 
