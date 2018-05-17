@@ -196,19 +196,16 @@ void chatterCallback(const sensor_msgs::ImageConstPtr& msg)//一旦收到传感�
    ARFloat vertex[4][2];
    ARFloat line[4][3];
 
-   printf("\n\nFound marker %d  (confidence %d%%):\n\n  ", id, (int(cf * 100.0f)));
-
-
    //把四条边和中心画在了rgb图上
    drawMarkerInfo(im_showMarker,markInfo);
    cv::imshow("imageMarker",im_showMarker);
-   cv::waitKey(4);
+   cv::waitKey(10);
 
    //打印出识别到的路标
    printf("\n\nFound marker %d  (confidence %d%%):\n\n  ", markerId[0], (int(conf * 100.0f)));
    printf("\nPose-Matrix(相机坐标系在世界坐标系中位姿为：）\n\n");
    for (int i = 0; i < 16; i++)
-       printf("%10.3f  %s", tracker->getModelViewMatrix()[i], (i % 4 == 3) ? "\n" : "");
+      printf("%10.3f  %s", tracker->getModelViewMatrix()[i], (i % 4 == 3) ? "\n" : "");
 
    //rotToEular_angle(tracker->getModelViewMatrix(),eular);
    Matrix3f R=Matrix3f::Identity();
@@ -226,8 +223,8 @@ void chatterCallback(const sensor_msgs::ImageConstPtr& msg)//一旦收到传感�
    pose_msg.pose.orientation.y=Q.y();
    pose_msg.pose.orientation.z=Q.z();
    pose_msg.pose.orientation.w=Q.w();
-   ROS_INFO("position_x= %lf=position_x",pose_msg.pose.position.x);
-   ROS_INFO("position_y= %lf=position_y",pose_msg.pose.position.y);
+   // ROS_INFO("position_x= %lf=position_x",pose_msg.pose.position.x);
+   // ROS_INFO("position_y= %lf=position_y",pose_msg.pose.position.y);
 }
 
 int main(int argc, char **argv){
@@ -238,7 +235,7 @@ int main(int argc, char **argv){
   tracker= new TrackerSingleMarker (IMG_WIDTH,IMG_HEIGHT, 8, 6, 6, 6, 0);
   tracker->setPixelFormat(ARToolKitPlus::PIXEL_FORMAT_LUM);  //其实就是灰度图的格式
 
-  if (!tracker->init("/home/lumino/catkin_orb/src/markerDetect/camera.cal", 1.0f, 1000.0f)) // load MATLAB file
+  if (!tracker->init("/home/lumino/catkin_orb/src/marker_detect/camera.cal", 1.0f, 1000.0f)) // load MATLAB file
   {
       printf("ERROR: init() failed\n");
       return -1;
@@ -262,18 +259,15 @@ int main(int argc, char **argv){
   ros::Time current_time;
   current_time=ros::Time::now();
 
-  ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("PoseStamped", 1);
+  ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("PoseStamped_mark", 1);
   pose_msg.header.stamp=current_time;
-  pose_msg.header.frame_id="PoseStamped";
+  pose_msg.header.frame_id="PoseStamped_mark";
 
   while (ros::ok())
     {
       pose_pub.publish(pose_msg);
-      ros::Rate loop_rate(10);  
       ros::spinOnce();
     }
-  
-
   ros::shutdown();
   delete(tracker);
   return 0;
