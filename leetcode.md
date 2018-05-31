@@ -63,13 +63,19 @@
     - [389. Find the Difference](#389-find-the-difference)
     - [80. Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array-ii)
 - [二分查找](#)
+    - [二分法注意事项:](#)
+    - [二分法总结案例](#)
     - [349. Intersection of Two Arrays(交集)](#349-intersection-of-two-arrays)
         - [学习`set`和`unordered_set`的`初始化`与`插入`。](#setunordered-set)
     - [350. Intersection of Two Arrays II](#350-intersection-of-two-arrays-ii)
     - [167. Two Sum II - Input array is sorted](#167-two-sum-ii---input-array-is-sorted)
     - [744. Find Smallest Letter Greater Than Target](#744-find-smallest-letter-greater-than-target)
     - [153. 寻找旋转排序数组中的最小值](#153)
+    - [154. Find Minimum in Rotated Sorted Array II(含有重复数)](#154-find-minimum-in-rotated-sorted-array-ii)
     - [33. Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
+    - [35. Search Insert Position(区间和算法区间一致)](#35-search-insert-position)
+    - [34. 搜索范围](#34)
+    - [74. 搜索二维矩阵](#74)
 - [树](#)
     - [广度优先搜索(层次遍历)](#)
         - [111. Minimum Depth of Binary Tree（找二叉树的最小深度）](#111-minimum-depth-of-binary-tree)
@@ -79,6 +85,8 @@
             - [`vector`的`reserve`用法，](#vectorreserve)
         - [226. Invert Binary Tree](#226-invert-binary-tree)
         - [112. Path Sum](#112-path-sum)
+- [贪心算法](#)
+    - [11. 盛最多水的容器](#11)
 - [报错](#)
 - [常用算法函数](#)
     - [`std::accumulate`定义于头文件 `<numeric>`](#std--accumulate-numeric)
@@ -1680,6 +1688,138 @@ public:
 # 二分查找
 一般都是排好序，题目中暗含了这一信息。
 
+如果是double，完全没什么难度，重点坑就是整数的。。。表示被坑过好多遍，毕竟弱渣。。。首先，如果题目属于"二分值越大越符合条件"，即要求符合条件的最小值，那就是while(r>l){mid=(l+r)/2。。。}然后更新是不符合条件l=mid+1，否则是r=mid反之，即 题目属于"二分值越小越符合条件"，即要求符合条件的最大值，那就是while(r>l){mid=(l+r+1)/2。。。}然后更新是符合条件l=mid，否则是r=mid-1至于为啥？→_→其实只要试试r-l=1的例子。。。感觉就理解了upd:又想起一坑{其实是看到有人写了}，如果涉及负数，最好用mid=l+(r-l)/2代替第1类，mid=l+(r-l+1)/2代替第2类.
+
+## 二分法注意事项:
+* 中位数:(常用的是下位中位数,语言int经常自动向下取整)
+    * 下位中位数: lowerMedian=(length-1)/2
+    * 上位中位数: upperMedian=length/2
+* 指针的区间最好两头闭区间:[low,high]  
+    ```c
+    median=low+(high-low)/2
+    median=(high-low)/2 //容易溢出
+    ```
+* 终结条件
+    * 不要以`low==high`作为终止条件,容易被跳过;正确的应该是`low>high`:也就是搜索空间为空.
+    * 满足终结条件,返回值不要纠结,直接返回低位`low`.
+
+    ```java
+    public int binarySearch(int[] nums,int target){
+        int low=0,high=nums.length-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(nums[mid]<target) low=mid+1;
+            if(nums[mid]>target) high=mid-1;
+            if(nums[mid]>target) return mid;
+        }
+        return low;
+    }
+    ```
+以上代码能工作,有一个前提条件:**元素空间没有重复值**.
+
+推广到有重复元素的空间,二分查找问题就变成`寻找元素第一次出现的位置.`
+
+## 二分法总结案例
+```c
+int search(int array[], int n, int v)
+{
+    int left, right, middle;
+    left = 0, right = n;
+    while (left < right)//这是一个左闭右开的区间:[0, n).
+    {
+        middle = (left + right) / 2;
+        if (array[middle] > v)
+            right = middle - 1;
+        else if (array[middle] < v)
+            left = middle + 1;
+        else
+            return middle;
+    }
+    return -1;
+}
+```
+实际上,如果使用测试用例来测试,这个算法并不是在所有情况下都会出错的,还是有时可以得到正确的结果的.但是,你能看出来它错在哪儿吗?
+
+这是一个左闭右开的区间:[0, n).
+
+但是,在循环内部, 却不是这样操作的:
+```c
+middle = (left + right) / 2;
+        if (array[middle] > v)
+            right = middle - 1;
+        else if (array[middle] < v)
+            left = middle + 1;
+        else
+            return middle;
+```
+当array[middle] > v条件满足时, 此时v如果存在的话必然在左闭右开区间[left, middle)中, 因此,当这个条件满足时, right应该为middle, 而在这里, right赋值为middle - 1了, 那么, 就有可能遗漏array[middle - 1] = v的情况.
+
+这是一种典型的二分查找算法写错的情况,循环体是左闭右开区间,而循环体内部却是采用左闭右闭区间的算法进行操作.
+下面给出的两种正确的算法,算法search是左闭右闭区间算法,而算法search2是左闭右开区间算法,可以对比一下差异.
+
+```c
+//左闭右闭
+int search(int array[], int n, int v)
+{
+    int left, right, middle;
+    left = 0, right = n - 1;
+    while (left <= right)//左闭右闭
+    {
+        middle = (left + right) / 2;
+        if (array[middle] > v)
+            right = middle - 1;
+        else if (array[middle] < v)
+            left = middle + 1;
+        else
+            return middle;
+    }
+    return -1;
+}
+
+//左闭右开
+int search2(int array[], int n, int v)
+{
+    int left, right, middle;
+    left = 0, right = n;
+    while (left < right)//左闭右开
+    {
+        middle = (left + right) / 2;
+        if (array[middle] > v)
+            right = middle;//能取到右边界
+        else if (array[middle] < v)
+            left = middle + 1;
+        else
+            return middle;
+    }
+    return -1;
+}
+```
+
+下面再给出另一种典型的错误的二分查找算法,当查找的元素不在序列内时,它可能造成程序的死循环.
+```c
+int search2(int array[], int n, int v)
+{
+    int left, right, middle;
+    left = 0, right = n;
+    while (left < right)//左闭右开
+    {
+        middle = (left + right) / 2;
+        if (array[middle] > v)
+            right = middle;//能取到右边界
+        else if (array[middle] < v)
+            left = middle + 1;
+        else
+            return middle;
+    }
+    return -1;
+}
+```
+从循环条件来看,这个算法的操作区间是左闭右闭区间的,因此当array[middle] > v时,v如果存在的话应该在[left, middle- 1]中,因此此时right应该是middle - 1,而不是middle;类似的,当array[middle] < v时,下一次操作的区间应该是[middle + 1, right]中.而当元素不存在这个序列中时,算法在一个错误的区间中循环,但是又不能终止循环,于是就造成了死循环.
+
+**总结**:
+
+算法所操作的区间,是左闭右开区间,还是左闭右闭区间,这个区间,需要在循环初始化,循环体是否终止的判断中,以及每次修改left,right区间值这三个地方保持一致,否则就可能出错.
+
 ## 349. Intersection of Two Arrays(交集)
 ### 学习`set`和`unordered_set`的`初始化`与`插入`。
 给定两个数组，写一个函数来计算它们的交集。
@@ -1871,15 +2011,15 @@ class Solution {
 你可以假设数组中不存在重复元素。
 ```
 示例 1:
-
 输入: [3,4,5,1,2]
 输出: 1
-示例 2:
 
+示例 2:
 输入: [4,5,6,7,0,1,2]
 输出: 0
 ```
-```c++
+
+```c
 class Solution {
 public:
      int findMin(vector<int>& nums) {
@@ -1893,7 +2033,7 @@ public:
         if(i==nums.size())
             return nums[0]; 
      }
-    
+     //solution 2 binary find
       int findMin(vector<int>& nums) {   
          int l=0;int r=nums.size()-1;
          while(l<r)
@@ -1905,11 +2045,31 @@ public:
              //若l=mid;  当l=2,r=3的时候，mid=2；->l=2,mid=2。陷入死循环
              if(nums[mid]>=nums[l]) //必须有等于，否则跳不出while
                  l=mid+1;
-             else r=mid;    
+             else r=mid;
          }
          return nums[l];
      }
 };
+```
+
+## 154. Find Minimum in Rotated Sorted Array II(含有重复数)
+
+```c
+int findMin(vector<int>& nums) {
+        int l=0,r=nums.size()-1;
+        while(l<r){
+            if(nums[l]<nums[r]) return nums[l];
+            int mid=l+(r-l)/2;
+            if(nums[mid]>nums[l])
+                l=mid+1;
+            else if(nums[mid]<nums[l])
+                r=mid;
+            else
+                l++;//有重复的跳过
+        }
+        return nums[l];
+        
+    }
 ```
 ## 33. Search in Rotated Sorted Array
 Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
@@ -1976,11 +2136,155 @@ private:
 };
 ```
 
+## 35. Search Insert Position(区间和算法区间一致)
 
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 
+You may assume no duplicates in the array.
 
+里面就考察了区间和算法区间一致的细节.
+```c
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int l=0,r=nums.size()-1;
+        while(l<=r)
+        {
+            int mid=l+(r-l)/2;
+            if(nums[mid]<target)
+                l=mid+1;
+            else if(nums[mid]>target)
+                r=mid-1;
+            else 
+                return mid;
+        }
+        return l;
+            
+    }
+};
+```
 
+## 34. 搜索范围
 
+给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。
+
+你的算法时间复杂度必须是 O(log n) 级别。
+
+如果数组中不存在目标值，返回 [-1, -1]。
+
+```c++
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> res={-1,-1};
+        int index=0;
+        if(nums.empty())
+            return res;
+        index=findtarget(nums,target);
+        if(nums[index]==target)
+            res[0]=index;
+        else 
+            return res;
+        while(nums[index+1]==target && index<nums.size()-1){
+            index++;
+        }
+        res[1]=index;
+        return res;
+    }
+private:
+        int findtarget(vector<int>& nums, int target){
+            int l=0,r=nums.size()-1;
+        while(l<r){
+            int mid =l+(r-l)/2;
+            if(nums[mid]<target)
+                l=mid+1;
+            else 
+                r=mid;
+            }
+            return l; 
+    }
+};
+```
+
+## 74. 搜索二维矩阵
+
+编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+
+每行中的整数从左到右按升序排列。
+每行的第一个整数大于前一行的最后一个整数。
+示例 1:
+
+输入:
+matrix = [
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+target = 3
+输出: true
+示例 2:
+
+输入:
+matrix = [
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+target = 13
+输出: false
+
+```c++
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        
+        if(matrix.empty())
+            return false;
+        if(matrix[0].empty())
+            return false;
+        /*push_back浪费时间
+        //vector<int> cols;
+        // for(int i=0;i<matrix.size();i++)
+        // {
+        //     cols.push_back(matrix[i][0]);
+        // }
+        // int a=findtarget(cols,target);
+        */
+        int a=0;
+        if(matrix[0][0]>target)
+            return false;
+        while(matrix[a][0]<target&&a<matrix.size()-1)
+            a++;
+        if(matrix[a][0]==target)
+            return true;
+        else if(matrix[a][0]<target)
+        {
+            int b=findtarget(matrix[a],target);
+            return (matrix[a][b]==target);
+        }
+        else 
+        {
+            a--;
+            if(a<0)
+                a=a+1;
+            int b=findtarget(matrix[a],target);
+            return (matrix[a][b]==target);
+        }
+    }
+private:
+        int findtarget(vector<int>& nums, int target){
+            int l=0,r=nums.size()-1;
+        while(l<r){
+            int mid =l+(r-l)/2;
+            if(nums[mid]<target)
+                l=mid+1;
+            else 
+                r=mid;
+            }
+            return l; 
+    }    
+};
+```
 
 
 
@@ -2342,8 +2646,28 @@ public:
     }
 };
 ```
+# 贪心算法
 
+## 11. 盛最多水的容器
 
+给定 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。画 n 条垂直线，使得垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+注意：你不能倾斜容器，n 至少是2。
+
+```c++
+int maxArea(vector<int>& height) {
+        int n=height.size(),left=0,right=n,res=0;
+        while(left<right){
+            int water=max(height[left],height[right])*(right-left);
+            if(height[left]<height[right])
+                left++;
+            else
+                right--;
+            res=max(water,res);
+        }
+        return res;
+
+```
 # 报错
 
 1. [reference binding to null pointer of type 'value_type'](http://blog.csdn.net/m0_38088298/article/details/79249044)
