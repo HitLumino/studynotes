@@ -240,5 +240,51 @@ defined in `<exception>`.
 
 ![异常](pic/异常.png)
 
-##  Chapter5 通用工具
+##  Chapter 5  通用工具
+
+### `pair` 和 `tuple`
+
+#### `pair的基本方法`
+
+为了能让程序能够处理`pair`的两个值,它提供了`直接访问对应的数据成员`的能力. `struct`实现.
+
+```c++
+namespace std{
+    template<typename T1,typename T2>
+    struct pair{
+    T1 first;
+    T2 second;
+    ...
+    }
+}
+```
+
+![](pic/pair_func.png)
+
+写一个泛型函数模板,用一个`value pair` 写入一个`stream`内.
+
+```c++
+template<typename T1,typename T2>
+std::ostream& operator <<(std::ostream& strm,const std::pair<T1,T2>& p)
+{
+    return strm<<"["<<p.first<<","<<p.second<<"]";
+}
+```
+
+自c++11起,可以使用`tuple_size<>::value`获取元素个数;`tuple_element<>::type`获取类型;`get()`获得`first`或者`second`.
+
+```c++
+typedef std::pair<int,float> IntFloatPair;
+IntFloatPair p(42,3.14);
+std::get<0>(p)                            //42
+std::get<1>(p)                            //3.14
+std::tuple_size<IntFloatPair>::value      //2
+std::tuple_element<0,IntFloatPair>::type  //生成int
+```
+
+##### 构造函数和赋值
+
+
+
+
 
