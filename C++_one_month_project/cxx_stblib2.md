@@ -215,6 +215,62 @@ constexpr int sz=size(); //只有当size()是constexpr函数时，才正确！
   //42
   ```
 
+#### `Member Template`(成员模板)
+
+Class的成员函数可以是`template`.然而`Member Template`不能是`virtual`.
+
+```c++
+//成员函数模板
+class MyClass{
+    ...
+    template<typename T>
+        void f(T);
+};
+
+template <typename T>
+class MyClass{
+    private:
+    	T value;
+    public:
+    void assign(const MyClass<T> & x){
+        value=x.value;
+    }
+};
+//如果assign()调用者和其实参的template类型不同,是不可以的.
+//也就是说,这两个函数的<T>需要一致!
+```
+
+现在,这个成员函数的template实参可具备任何template类型,只要该类型"可被赋值".
+
+```c++
+template <typename T>
+class MyClass{
+    private:
+    	T value;
+    public:
+    	template <typename X>
+    void assign(const MyClass<X> &x){
+            //value=x.value;
+            //注意:现在assign()的实参x,其类型不同于*this,因此不能直接使用MyClass<>的private和protect成员!
+            value=x.getValue();
+        }
+    T getValue() const{
+        return value;
+    }
+    ...
+};
+void f(){
+    MyClass<double> d;
+    MyClass<int> i;
+    d.assign(d);//OK
+    d.assign(i);//OK
+}
+```
+
+##### `template` 构造函数
+
+Member Template的一个特殊形式就是Template构造函数.经常用于"对象被复制时给予隐式类型转换".注意:`template` 构造函数并不压制`copy`构造函数的隐式声明.如果类型完全符合,隐式的copy构造函数会被生成出来,并被调用.例如:
+
 ## Chapter4 一般概念
 
 ### 命名空间
@@ -283,6 +339,8 @@ std::tuple_element<0,IntFloatPair>::type  //生成int
 ```
 
 ##### 构造函数和赋值
+
+
 
 
 
