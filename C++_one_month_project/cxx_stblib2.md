@@ -946,7 +946,7 @@ if(equal(coll1.begin(),coll1.end(),coll2.begin())){
 
 如果算法来处理多重区间,那么当你调用它时,务必确保第二区间所拥有的元素数量个数至少和第一区间一样多.
 
-![多重区间](/pic/多重区间.png)
+![多重区间](pic/多重区间.png)
 
 ```c++
 #include <algorithm>
@@ -1040,7 +1040,7 @@ inserter(coll4,coll4.begin())); // destination
    * 这是唯一可用于关联容器身上的预定义的`insert`.(**虽然关联容器插入时不能指定位置,但他们可以忽略**)
    * 不改变顺序.
 
-![inserter](/pic/inserter.png)
+![inserter](pic/inserter.png)
 
 #### Stream Iterators(串流迭代器)
 
@@ -1141,7 +1141,7 @@ int main()
 //post: 6 5 4 2 1 1 2 4 5 6 5 6
 ```
 
-![remove](/pic/remove.png)
+![remove](pic/remove.png)
 
 `remove()`并没有改变集合中的元素数量.`cend()`返回的还是当初那个终点,`size()`返回的还是当初那个大小.
 
