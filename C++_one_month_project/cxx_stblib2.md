@@ -1,4 +1,3 @@
-
 <!-- TOC -->
 
 - [C++标准库 第2版](#c%E6%A0%87%E5%87%86%E5%BA%93-%E7%AC%AC2%E7%89%88)
@@ -37,8 +36,26 @@
                 - [对付Array](#%E5%AF%B9%E4%BB%98array)
                 - [其他析构策略](#%E5%85%B6%E4%BB%96%E6%9E%90%E6%9E%84%E7%AD%96%E7%95%A5)
     - [Chapter 6 STL](#chapter-6-stl)
-        - [STL组件](#stl%E7%BB%84%E4%BB%B6)
         - [容器](#%E5%AE%B9%E5%99%A8)
+            - [序列容器](#%E5%BA%8F%E5%88%97%E5%AE%B9%E5%99%A8)
+            - [关联容器](#%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8)
+            - [容器适配器](#%E5%AE%B9%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8)
+        - [迭代器](#%E8%BF%AD%E4%BB%A3%E5%99%A8)
+            - [`Range-Based for Loops` vs. `Iterators`](#range-based-for-loops-vs-iterators)
+            - [关联式及无序图实例](#%E5%85%B3%E8%81%94%E5%BC%8F%E5%8F%8A%E6%97%A0%E5%BA%8F%E5%9B%BE%E5%AE%9E%E4%BE%8B)
+            - [迭代器的种类](#%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E7%A7%8D%E7%B1%BB)
+        - [算法](#%E7%AE%97%E6%B3%95)
+            - [区间](#%E5%8C%BA%E9%97%B4)
+                - [处理多重区间](#%E5%A4%84%E7%90%86%E5%A4%9A%E9%87%8D%E5%8C%BA%E9%97%B4)
+        - [迭代器适配器](#%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8)
+            - [**Insert iterators**: 安插型迭代器](#insert-iterators-%E5%AE%89%E6%8F%92%E5%9E%8B%E8%BF%AD%E4%BB%A3%E5%99%A8)
+            - [Stream Iterators(串流迭代器)](#stream-iterators%E4%B8%B2%E6%B5%81%E8%BF%AD%E4%BB%A3%E5%99%A8)
+            - [Reverse Iterators](#reverse-iterators)
+            - [Move Iterators](#move-iterators)
+        - [用户自定义的泛型函数](#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E6%B3%9B%E5%9E%8B%E5%87%BD%E6%95%B0)
+        - [Manipulating Algorithms(更易型算法)](#manipulating-algorithms%E6%9B%B4%E6%98%93%E5%9E%8B%E7%AE%97%E6%B3%95)
+            - [移除(Removing) 元素](#%E7%A7%BB%E9%99%A4removing-%E5%85%83%E7%B4%A0)
+            - [如何更易关联和无序容器呢?](#%E5%A6%82%E4%BD%95%E6%9B%B4%E6%98%93%E5%85%B3%E8%81%94%E5%92%8C%E6%97%A0%E5%BA%8F%E5%AE%B9%E5%99%A8%E5%91%A2)
 
 <!-- /TOC -->
 
@@ -758,9 +775,426 @@ int main(){
 
 ## Chapter 6 STL
 
-### STL组件
-
-组件中最关键的是容器/迭代器/算法.
+STL组件中最关键的是容器/迭代器/算法.
 
 ### 容器
 
+* 序列式容器 :有序集合 array, vector, deque, list, and forward_list
+* 关联容器: set, multiset, map, and multimap.
+* 无序容器: unordered_set, unordered_multiset, unordered_map, and unordered_multimap.
+
+#### 序列容器
+
+* `array<int,5>与array<int,10>`不是一个类型.元素个数也是array类型的一部分.
+
+* `List`双向链表,不提供随机访问,一般性访问需要线性时间;比`vector`和`deque`常量时间要慢很多.
+
+* `Forward List`单向链表,不支持后退移动,所以没有`push_back()`和`size()`.
+
+####  关联容器
+
+* 你不能直接改动元素的`value`,因为会破坏元素的自动排序.
+
+* `map`或`multimap`处理元素时,每个元素的实际类型是`pair<const key,value>`.
+
+  ```c++
+  #include <map>
+  #include <set>
+  //c++11 可以一般初始化
+  multimap<int,string> coll; // container for int/string values
+  // insert some elements in arbitrary order
+  // - a value with key 1 gets inserted twice
+  coll = { {5,"tagged"},
+  {2,"a"},
+  {1,"this"},
+  {4,"of"},
+  {6,"strings"},
+  {1,"is"},
+  {3,"multimap"} };
+  //set初始化
+  multiset<string> cities {
+  "Braunschweig", "Hanover", "Frankfurt", "New York",
+  "Chicago", "Toronto", "Paris", "Frankfurt"
+  };
+  //注意他的insert()
+  cities.insert({"London","Munich","Hanover", "Braunschweig"});
+  ```
+
+#### 容器适配器
+
+* Stack
+* Queue
+* Priority queue
+
+### 迭代器
+
+自C++11起,我们可以使用`range-based for`循环来处理所有的元素,然而如果只是要找出某元素,并不是处理所有元素,我们需要迭代所有的元素,直到找到目标,或者将这个位置存放在某处,以便稍后迭代.因此我们需要这样一个概念:以一个对象表现出容器元素的位置.
+
+* `range-based for`循环其实就是这个概念的一个便捷接口,其内部使用迭代器对象迭代所有的元素.
+* 迭代器是一个"可以遍历STL容器全部或者部分元素"的对象.迭代器用来表示容器中的某一位置.
+* 每一种容器都必须提供自己的迭代器,他是一种智能指针,其内部运行机制取决于遍历的数据结构.
+  * `Operator *`返回当前位置的元素值;可以用操作符`->`取用他们
+  * `Operator ++`令迭代器前进到下一个元素,大部分迭代器还有`Operator --`
+  * `Operator ==`和`!=`判断两个迭代器是否指向同一位置
+  * `Operator =`对迭代器赋值.
+
+```c++
+list<char> coll; 
+for (char c=’a’; c<=’z’; ++c) {
+	coll.push_back(c);
+}
+list<char>::const_iterator pos;
+for(pos=coll.begin();pos!=coll.end();++pos){
+    cout<<*pos<<" ";
+}
+```
+
+* pos是"指向容器内常量元素"的迭代器`list<char>::const_iterator pos`
+* 任何容器都定义有两种:
+  * `container::iterator`:"读/写模式"
+  * `container::const_iterator`:"只读模式"
+* `++pos`比`pos++`效率高,后者需要一个临时对象,因为它必须存放迭代器的原本位置返回之
+
+现在,我们可以用关键字`auto`代替迭代器的精确类型.(`list<char>::const_iterator pos;`)
+
+```c++
+for (auto pos = coll.begin(); pos != coll.end(); ++pos) {
+cout << *pos << ’ ’;
+}//但是,pos默认是非常量迭代器,要是返回类型是常量迭代器,可以
+//cbegin() cend()
+for (auto pos = coll.cbegin(); pos != coll.cend(); ++pos) {
+...
+}
+```
+
+#### `Range-Based for Loops` vs. `Iterators`
+
+```c++
+for (type elem : coll) {
+...
+}
+//等价于
+for (auto pos=coll.begin(), end=coll.end(); pos!=end; ++pos) {
+type elem = *pos;
+...
+}
+```
+
+#### 关联式及无序图实例
+
+* 之前的C++在对`set`进行插入的时候,是依次插入一个值;现在可以`coll.insert({1,2,3,4});`
+* `set`自动默认从小到大排序,你也可以>为依据.`typedef set<int,greater<int>> IntSet;`
+* `set`不允许序列容器才有的`push_back`或`push_front`,不允许你指定位置插入.
+
+#### 迭代器的种类
+
++ **Forward iterators** : unordered_set, unordered_multiset, unordered_map, and unordered_multimap are “at least” forward iterators
++ **Bidirectional iterators**: 可以递增也可以递减 list, set, multiset, map, and multimap 
++ **Random-access iterators**: 除了双向外,还可以>/<操作符.vector, deque, array
++ **Input iterators** 
++ **Output iterators**
+
+为了尽可能写出与容器无关的泛型代码,最好不要使用随机访问迭代器特有的操作
+
+```c++
+for (auto pos = coll.begin(); pos != coll.end(); ++pos) {
+...
+}
+//下面代码无法在list set map上运行
+for (auto pos = coll.begin(); pos < coll.end(); ++pos) {
+...
+}
+```
+
+### 算法
+
+**算法并非容器的成员函数,而是一种搭配迭代器使用的全局函数.**
+
+```c++
+#include <algorithm>
+#include <vector>
+#include <iostream>
+using namespace std;
+int main(){
+    vector<int> coll ={2,5,4,1,6,3};
+    auto minpos=min_element(coll.cbegin(),coll.cend());
+    auto maxpos = max_element(coll.cbegin(),coll.cend());
+    sort(coll.begin(), coll.end());
+    auto pos3 = find (coll.begin(), coll.end(),3);
+    reverse (pos3, coll.end());
+}
+```
+
+* `min_element()和 max_element`:返回最大/小的位置.**如果不止一个,返回第一个位置.**
+* `sort()`:这里不使用`cbegin`因为会改变元素的值.**确实!**
+* `reverse`:也是不使用`cbegin`.
+
+#### 区间
+
+所有的算法处理的都是半开区间:`[begin,end)`.
+
+##### 处理多重区间
+
+通常你必须设定第一区间的起点和终点,至于其他区间,只需设定起点即可.终点通常可以由第一区间的数量推导出来.
+
+```c++
+//逐一比较coll1与coll2的所有元素.
+if(equal(coll1.begin(),coll1.end(),coll2.begin())){
+    ...
+}
+```
+
+如果算法来处理多重区间,那么当你调用它时,务必确保第二区间所拥有的元素数量个数至少和第一区间一样多.
+
+![多重区间](/pic/多重区间.png)
+
+```c++
+#include <algorithm>
+#include <list>
+#include <vector>
+using namespace std;
+int main()
+{
+    list<int> coll1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    vector<int> coll2;
+    // RUNTIME ERROR:
+    // - overwrites nonexisting elements in the destination
+    copy (coll1.cbegin(), coll1.cend(), // source  
+    coll2.begin()); // destination
+    ...
+}
+```
+
+这里的`copy()`算法,将第一区间的全部元素拷贝到第二区间.由于算法执行的是覆写(overwrite)而非插入(insert)动作.
+
+**Notes**: 
+
+* 源目标迭代器用的`常量迭代器`,第二区间用的是`非常量迭代器`
+* 添加`resize()`修改第二区间长度.
+
+### 迭代器适配器
+
+C++标准库提供了数个预定义的特殊迭代器,也称_**迭代器适配器**_
+
+1. **Insert iterators**: 安插型迭代器
+2. **Stream iterators**: 串流型迭代器
+3. **Reverse iterators**:逆向迭代器
+4. **Move iterators (since C++11)**:搬移迭代器
+
+#### **Insert iterators**: 安插型迭代器
+
+他可以解决算法以安插(insert)方式而非覆写(overwrite)方式运作.使用他可以解决"目标空间不足"问题.
+
+```c++
+#include <algorithm>
+#include <iterator>
+#include <list>
+#include <vector>
+#include <deque>
+#include <set>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+list<int> coll1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+// copy the elements of coll1 into coll2 by appending them
+vector<int> coll2;
+copy (coll1.cbegin(), coll1.cend(), // source
+back_inserter(coll2)); // destination
+// copy the elements of coll1 into coll3 by inserting them at the front
+// - reverses the order of the elements
+deque<int> coll3;
+copy (coll1.cbegin(), coll1.cend(), // source
+front_inserter(coll3)); // destination
+// copy elements of coll1 into coll4
+// - only inserter that works for associative collections
+set<int> coll4;
+copy (coll1.cbegin(), coll1.cend(), // source
+inserter(coll4,coll4.begin())); // destination
+}
+```
+
+此例运用了三种预定义的`inser iterator`:
+
+1. **Back inserters **(安插在容器的最末端) 其内部调用`push_back()`,相当于"追加"动作.
+
+   ```c++
+   copy (coll1.cbegin(), coll1.cend(), // source
+   back_inserter(coll2)); // destination
+   ```
+
+   当然只有容器能提供`push_back()`才可以用.例如`vector/deque/list/string`
+
+2. **Front inserters**(安插于容器最前端):其内部调用`push_front()`.只有`deque/list/forward_list`.
+
+   * 注意反转了被插入元素的次序.
+
+3. **General inserters**(普通插入),需要指明插入的位置,在所指位置前方插入元素.内部调用`insert()`,并以新值与新位置作为实参传入.
+
+   ```c++
+   copy (coll1.cbegin(), coll1.cend(), // source
+   inserter(coll4,coll4.begin())); // destination
+   ```
+
+   * 这是唯一可用于关联容器身上的预定义的`insert`.(**虽然关联容器插入时不能指定位置,但他们可以忽略**)
+   * 不改变顺序.
+
+![inserter](/pic/inserter.png)
+
+#### Stream Iterators(串流迭代器)
+
+```c++
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    vector<string> coll;
+    // read all words from the standard input
+    // - source: all strings until end-of-file (or error)
+    // - destination: coll (inserting)
+    copy (istream_iterator<string>(cin), // start of source
+    istream_iterator<string>(), // end of source
+    back_inserter(coll)); // destination
+    // sort elements
+    sort (coll.begin(), coll.end());
+    // print all elements without duplicates
+    // - source: coll
+    // - destination: standard output (with newline between elements)
+    unique_copy (coll.cbegin(), coll.cend(), // source
+    ostream_iterator<string>(cout,"\n")); // destination
+}
+```
+
+#### Reverse Iterators
+
+Reverse Iterators 会造成算法的逆向操作,其内部将对`++`实行`--`.	
+
+所有提供双向或者随机访问迭代器的容器(除了forward_list之外所有的序列容器和所有关联式容器) 都可以通过他们的成员函数`rbegin()`和`rend()`产生一个反向迭代器.自C++起还提供了一组对于的成员函数`crbegin()`和`crend()`,他们会返回只读反向迭代器.
+
+```c++
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include <iostream>
+using namespace std;
+int main()
+{
+    vector<int> coll;
+    // insert elements from 1 to 9
+    for (int i=1; i<=9; ++i) {
+    	coll.push_back(i);
+	}
+    copy(coll.crbegin(),coll.crend(),ostream_iterator<int>(cout," "));
+    cout<<endl;
+}
+```
+
+`coll.crend()`:所指向容器内第一元素的前一位置.不要`*coll.crend`,无效元素!
+
+#### Move Iterators
+
+他们允许从一个容器移动元素到另一个容器.(后面再讲)
+
+### 用户自定义的泛型函数
+
+### Manipulating Algorithms(更易型算法)
+
+是指会"移除或重排或修改"元素的算法.
+
+#### 移除(Removing) 元素
+
+```c++
+#include <algorithm>
+#include <iterator>
+#include <list>
+#include <iostream>
+using namespace std;
+int main()
+{
+    list<int> coll;
+    // insert elements from 6 to 1 and 1 to 6
+    for (int i=1; i<=6; ++i) {
+        coll.push_front(i);
+        coll.push_back(i);
+    }
+    // print all elements of the collection
+    cout << "pre: ";
+    copy (coll.cbegin(), coll.cend(), // source
+    ostream_iterator<int>(cout," ")); // destination
+    cout << endl;
+    // remove all elements with value 3
+    remove (coll.begin(), coll.end(), // range
+    3); // value
+    // print all elements of the collection
+    cout << "post: ";
+    copy (coll.cbegin(), coll.cend(), // source
+    ostream_iterator<int>(cout," ")); // destination
+    cout << endl;
+}
+//pre: 6 5 4 3 2 1 1 2 3 4 5 6
+//post: 6 5 4 2 1 1 2 4 5 6 5 6
+```
+
+![remove](/pic/remove.png)
+
+`remove()`并没有改变集合中的元素数量.`cend()`返回的还是当初那个终点,`size()`返回的还是当初那个大小.
+
+改进后的版本:
+
+```c++
+#include <algorithm>
+#include <iterator>
+#include <list>
+#include <iostream>
+using namespace std;
+int main()
+{
+    list<int> coll;
+    // insert elements from 6 to 1 and 1 to 6
+    for (int i=1; i<=6; ++i) {
+        coll.push_front(i);
+        coll.push_back(i);
+    }
+    // print all elements of the collection
+    copy (coll.cbegin(), coll.cend(),
+    ostream_iterator<int>(cout," "));
+    cout << endl;
+    list<int>::iterator end = remove (coll.begin(), coll.end(),
+    3);
+    // print resulting elements of the collection
+    copy (coll.begin(), end,
+    ostream_iterator<int>(cout," "));
+    cout << endl;
+    // print number of removed elements
+    cout << "number of removed elements: "
+    << distance(end,coll.end()) << endl;
+    // remove ‘‘removed’’ elements
+    coll.erase (end, coll.end());
+    // print all elements of the modified collection
+    copy (coll.cbegin(), coll.cend(),
+    ostream_iterator<int>(cout," "));
+    cout << endl;
+}
+```
+
+在这个版本里,`list<int>::iterator end = remove (coll.begin(), coll.end(),3);`,这个`end`是被修改集合后,经过元素移动后新的逻辑终点.
+
+如果想要真正的删除元素,可以调用成员函数`erase()`:`coll.erase(end,coll.end);`
+
+正常的用法如下:
+
+```c++
+coll.erase(remove(coll.begin(),coll.end(),3),coll.end());//注意:不可以用coll.cbegin()!!!
+```
+
+总结一下:为什么算法不自己调用`erase()`呢?这个问题正好点出STL为获得弹性而付出的代价.通过"以迭代器为接口",STL将数据结构与算法分离开来.
+
+#### 如何更易关联和无序容器呢?
+
+如果更易型算法用在关联或无序容器里,会破坏位置.进而破坏容器本身对次序的维护(关联容器是其)
