@@ -1,3 +1,5 @@
+
+
 <!-- TOC -->
 
 - [C++标准库 第2版](#c%E6%A0%87%E5%87%86%E5%BA%93-%E7%AC%AC2%E7%89%88)
@@ -56,6 +58,31 @@
         - [Manipulating Algorithms(更易型算法)](#manipulating-algorithms%E6%9B%B4%E6%98%93%E5%9E%8B%E7%AE%97%E6%B3%95)
             - [移除(Removing) 元素](#%E7%A7%BB%E9%99%A4removing-%E5%85%83%E7%B4%A0)
             - [如何更易关联和无序容器呢?](#%E5%A6%82%E4%BD%95%E6%9B%B4%E6%98%93%E5%85%B3%E8%81%94%E5%92%8C%E6%97%A0%E5%BA%8F%E5%AE%B9%E5%99%A8%E5%91%A2)
+            - [算法vs.成员函数](#%E7%AE%97%E6%B3%95vs%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0)
+        - [以函数作为算法的实参](#%E4%BB%A5%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E5%8F%82)
+        - [使用Lambda](#%E4%BD%BF%E7%94%A8lambda)
+            - [使用lambda的好处](#%E4%BD%BF%E7%94%A8lambda%E7%9A%84%E5%A5%BD%E5%A4%84)
+            - [以lambda作为排序准则](#%E4%BB%A5lambda%E4%BD%9C%E4%B8%BA%E6%8E%92%E5%BA%8F%E5%87%86%E5%88%99)
+            - [lambda的局限](#lambda%E7%9A%84%E5%B1%80%E9%99%90)
+        - [函数对象(Function Object)](#%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1function-object)
+            - [定义一个函数对象](#%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1)
+            - [预定义的函数对象](#%E9%A2%84%E5%AE%9A%E4%B9%89%E7%9A%84%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1)
+            - [Binder](#binder)
+    - [Chapter 7  STL容器](#chapter-7-stl%E5%AE%B9%E5%99%A8)
+        - [容器的共通能力和共通操作](#%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%B1%E9%80%9A%E8%83%BD%E5%8A%9B%E5%92%8C%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C)
+            - [初始化](#%E5%88%9D%E5%A7%8B%E5%8C%96)
+            - [赋值和swap()](#%E8%B5%8B%E5%80%BC%E5%92%8Cswap)
+            - [与大小相关的操作函数](#%E4%B8%8E%E5%A4%A7%E5%B0%8F%E7%9B%B8%E5%85%B3%E7%9A%84%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0)
+            - [比较](#%E6%AF%94%E8%BE%83)
+            - [元素访问](#%E5%85%83%E7%B4%A0%E8%AE%BF%E9%97%AE)
+        - [Array](#array)
+        - [Vector](#vector)
+            - [vector 的能力](#vector-%E7%9A%84%E8%83%BD%E5%8A%9B)
+                - [大小(Size)和容量(Capacity)](#%E5%A4%A7%E5%B0%8Fsize%E5%92%8C%E5%AE%B9%E9%87%8Fcapacity)
+                - [元素访问](#%E5%85%83%E7%B4%A0%E8%AE%BF%E9%97%AE)
+                - [安插和移除](#%E5%AE%89%E6%8F%92%E5%92%8C%E7%A7%BB%E9%99%A4)
+                - [Examples](#examples)
+                - [`Class vector<bool>`](#class-vectorbool)
 
 <!-- /TOC -->
 
@@ -1197,4 +1224,733 @@ coll.erase(remove(coll.begin(),coll.end(),3),coll.end());//注意:不可以用co
 
 #### 如何更易关联和无序容器呢?
 
-如果更易型算法用在关联或无序容器里,会破坏位置.进而破坏容器本身对次序的维护(关联容器是其)
+如果更易型算法用在关联或无序容器里,会破坏位置.进而破坏容器本身对次序的维护(关联容器是其已排好序;对无序容器而言则是其hash函数的运算结果.)
+
+很简单!调用他们自己的成员函数.
+
+#### 算法vs.成员函数
+
+容器本身可能提供功能相似而效能更佳的成员函数.比如`list`的元素调用`remove()`.
+
+算法本身并不知道他工作于`list`身上,因此他在任何容器中都一样:改变元素值,重新排列元素.如果他移除了第一个元素,后面所有的元素就会分别被设给各自的前一个元素.这就违反了`list`的主要优点---修改`link`而非实值来安插/移动/移除元素.
+
+**你应该总是优先选用成员函数.**
+
+`list`的成员函数`remove`:真正的移除.但是换了容器,就不行了.
+
+```c++
+#include <list>
+#include <algorithm>
+using namespace std;
+int main()
+{
+    list<int> coll;
+    // insert elements from 6 to 1 and 1 to 6
+    for (int i=1; i<=6; ++i) {
+    coll.push_front(i);
+    coll.push_back(i);
+    }
+    // remove all elements with value 3 (poor performance)
+    coll.erase (remove(coll.begin(),coll.end(),
+    3),
+    coll.end());
+    // remove all elements with value 4 (good performance)
+    coll.remove (4);
+}
+```
+
+### 以函数作为算法的实参
+
+* for_each()
+* transform()
+* find_if: 单判断式
+
+Example1: `for_each()`
+
+```c++
+#include <vector>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+// function that prints the passed argument
+void print (int elem)
+{
+	cout << elem << ’ ’;
+}
+int main()
+{
+    vector<int> coll;
+    // insert elements from 1 to 9
+    for (int i=1; i<=9; ++i) {
+    	coll.push_back(i);
+    }
+    // print all elements
+    for_each (coll.cbegin(), coll.cend(), // range
+    print); // operation
+    cout << endl;
+}
+```
+
+Example2 :`transform()`
+
+```c++
+#include <set>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <iostream>
+#include "print.hpp"
+int square (int value)
+{
+	return value*value;
+}
+int main()
+{
+    std::set<int> coll1;
+    std::vector<int> coll2;
+    // insert elements from 1 to 9 into coll1
+    for (int i=1; i<=9; ++i) {
+    	coll1.insert(i);
+    }
+    PRINT_ELEMENTS(coll1,"initialized: ");
+    // transform each element from coll1 to coll2
+    // - square transformed values
+    std::transform (coll1.cbegin(),coll1.cend(), // source
+    std::back_inserter(coll2), // destination
+    square); // operation
+    PRINT_ELEMENTS(coll2,"squared: ");
+}
+```
+
+![transform](pic/transform.png)
+
+Example 3:
+
+```c++
+#include <list>
+#include <algorithm>
+#include <iostream>
+#include <cstdlib> // for abs()
+using namespace std;
+// predicate, which returns whether an integer is a prime number
+bool isPrime (int number)
+{
+    // ignore negative sign
+    number = abs(number);
+    // 0 and 1 are no prime numbers
+    if (number == 0 || number == 1) {
+        return false;
+}
+// find divisor that divides without a remainder
+int divisor;
+for (divisor = number/2; number%divisor != 0; --divisor) {
+    ;
+}
+    // if no divisor greater than 1 is found, it is a prime number
+    return divisor == 1;
+}
+int main()
+{
+    list<int> coll;
+    // insert elements from 24 to 30
+    for (int i=24; i<=30; ++i) {
+    coll.push_back(i);
+    }
+    // search for prime number
+    auto pos = find_if (coll.cbegin(), coll.cend(), // range
+    isPrime); // predicate
+    if (pos != coll.end()) {
+    // found
+    cout << *pos << " is first prime number found" << endl;
+    }
+    else {
+    // not found
+    cout << "no prime number found" << endl;
+    }
+}
+```
+Example4 
+```c++
+// stl/sort1.cpp
+#include <algorithm>
+#include <deque>
+#include <string>
+#include <iostream>
+using namespace std;
+class Person {
+public:
+    string firstname() const;
+    string lastname() const;
+    ...
+};
+// binary function predicate:
+// - returns whether a person is less than another person
+bool personSortCriterion (const Person& p1, const Person& p2)
+{
+// a person is less than another person
+// - if the last name is less
+// - if the last name is equal and the first name is less
+    return p1.lastname()<p2.lastname() ||
+    (p1.lastname()==p2.lastname() &&
+    p1.firstname()<p2.firstname());
+}
+int main()
+{
+    deque<Person> coll;
+    ...
+    sort(coll.begin(),coll.end(), // range
+    personSortCriterion); // sort criterion
+    ...
+}
+
+```
+
+### 使用Lambda
+
+可以说是对以函数作为算法参数的一种改进方式.
+
+```c++
+std::transform(coll.begin(),coll.end(),coll.begin(),[](double d){return d*d*d});
+```
+
+#### 使用lambda的好处
+
+```c++
+// stl/lambda1.cpp
+#include <algorithm>
+#include <deque>
+#include <iostream>
+using namespace std;
+int main()
+{
+	deque<int> coll = { 1, 3, 19, 5, 13, 7, 11, 2, 17 };
+    int x = 5;
+    int y = 12;
+    auto pos = find_if (coll.cbegin(), coll.cend(), // range
+    [=](int i) { // search criterion
+    return i > x && i < y;
+    });
+    cout << "first elem >5 and <12: " << *pos << endl;
+}
+```
+
+#### 以lambda作为排序准则
+
+```c++
+#include <algorithm>
+#include <deque>
+#include <string>
+#include <iostream>
+using namespace std;
+
+class Person {
+public:
+    string firstname() const;
+    string lastname() const;
+    ...
+};
+int main()
+{
+    deque<Person> coll;
+    ...
+    // sort Persons according to lastname (and firstname):
+    sort(coll.begin(),coll.end(), // range
+    [] (const Person& p1, const Person& p2) { // sort criterion
+    return p1.lastname()<p2.lastname() ||
+    (p1.lastname()==p2.lastname() &&
+    p1.firstname()<p2.firstname());
+    });
+    ...
+}
+```
+
+#### lambda的局限
+
+lambda并非在每一方面都保持优势.让我们考虑使用lambda为关联容器只出一个排序准则:
+
+```c++
+auto cmp=[](const Person& p1,const Person& p2){
+    return (p1.lastname()<p2.lastname()||p1.lastname()==p2.lastname() &&p1.firstname()<p2.firstname());
+    ...
+}
+std::set<Person,decltype(cmp)> coll(cmp);
+```
+
+* 由于set声明式需要指明lambda类型,所以我们必须使用`decltype`,他会为一个lambda对象产生类型.
+* 你必须把cmp传进coll的构造函数,否则coll为调用自己的默认构造函数.
+
+### 函数对象(Function Object)
+
+传递给算法的"函数型实参"不一定是函数,可以是类似函数行为的对象.这种对象叫函数对象,或称为仿函数(functor).(1)函数指针.(2)"带有成员函数operator()"的class所建立的对象.(3)"带有转换函数可将自己转换成pointer to function"的class所建立的对象.(4)lambda.
+
+#### 定义一个函数对象
+
+什么才叫具备函数行为?是指可以"使用小括号传递实参,借以调用某个东西".
+
+```c++
+class X{
+    public:
+    return-value operator() (arguments) const;
+    ...
+};
+
+X foo;
+foo(arg1,arg2);
+//等同于
+foo.operator()(arg1,arg2);
+```
+
+```c++
+// stl/foreach2.cpp
+#include <vector>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+
+class PrintInt{
+    void operator() (int elem) const{
+        cout<<elem<<" ";
+    }
+};
+
+int main(){
+    vector<int> coll;
+    for (int i=1; i<=9; ++i) {
+		coll.push_back(i);
+	}
+    for_each(coll.begin(),coll.end(),PrintInt());
+    cout<<endl;
+}
+```
+
+来看一下`for_each()`算法:
+
+```c++
+namespace std{
+    template<typename Iterator,typename Operatoin>
+    Operation for_each(Iterator act,Iterator end, Operation op)
+    {
+        while(act!=end){
+            op(*act);
+            ++act;
+        }
+        return op;
+    }
+}
+```
+`for_each()`使用临时对象`op`(一个函数对象),针对每个元素`act`调用`op(*act)`.如果第三实参`op`是个`寻常函数`,就以`*act`为实参调用之;如果第三实参是函数对象,调用函数对象`op`的`operator()`.
+
+* **函数对象比寻常函数速度快.** 就template概念而言,由于更多细节在编译期就已经确定,可以得到更好的优化.
+* **函数对象是一种带状态的函数**. 可拥有成员函数和成员变量,则意味着函数对象拥有状态.
+* **每个函数对象有自己的类型**.
+
+对比:
+
+#### 预定义的函数对象
+
+C++标准库里内涵若干预定义的函数对象,涵盖了许多基础运算.典型的例子是作为排序准则的函数对象.`operator<`默认的排序准则是调用`<less>`.
+
+```c++
+set<int,less<int>> coll;
+set<int,greater<int>> coll;
+```
+
+另一个运用预定义函数对象的是STL算法.
+
+```c++
+// stl/fo1.cpp
+#include <deque>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include "print.hpp"
+using namespace std;
+int main()
+{
+    deque<int> coll1 = { 1, 2, 3, 5, 7, 11, 13, 17, 19 };
+    deque<int> coll2 = { 0, 2, 0, 5, 0, 11, 0, 17, 0};
+    
+    transform (coll1.cbegin(),coll1.cend(), // source
+    coll1.begin(), // destination
+    negate<int>()); // operation
+
+    transform (coll1.cbegin(),coll1.cend(), // first source
+    coll2.cbegin(), // second source
+    coll2.begin(), // destination
+    multiplies<int>()); // operation
+}
+```
+
+`multiplies<int>()`:相乘,两个容器之间的元素依次相乘. 目标1区间;目标2区间;结果区间
+
+#### Binder
+
+你可以使用特殊的`function adaptor`(函数适配器),或所谓的`binder`,将预定义的函数对象和其他数值结合为一体.
+
+```c++
+// stl/bind1.cpp
+#include <set>
+#include <deque>
+#include <algorithm>
+#include <iterator>
+#include <functional>
+#include <iostream>
+#include "print.hpp"
+using namespace std;
+using namespace std::placeholders;
+int main()
+{
+    set<int,greater<int>> coll1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    deque<int> coll2;
+    // Note: due to the sorting criterion greater<>() elements have reverse order:
+    PRINT_ELEMENTS(coll1,"initialized: ");
+    // transform all elements into coll2 by multiplying them with 10
+    transform (coll1.cbegin(),coll1.cend(), // source
+    back_inserter(coll2), // destination
+    bind(multiplies<int>(),_1,10)); // operation
+    PRINT_ELEMENTS(coll2,"transformed: ");
+    // replace value equal to 70 with 42
+    replace_if (coll2.begin(),coll2.end(), // range
+    bind(equal_to<int>(),_1,70), // replace criterion
+    42); // new value
+    PRINT_ELEMENTS(coll2,"replaced: ");
+    // remove all elements with values between 50 and 80
+    coll2.erase(remove_if(coll2.begin(),coll2.end(),
+    bind(logical_and<bool>(),
+    bind(greater_equal<int>(),_1,50),
+    bind(less_equal<int>(),_1,80))),
+    coll2.end());
+    PRINT_ELEMENTS(coll2,"removed: ");
+}
+```
+
+```c
+// 将coll1里所有的元素都乘以10,然后以安插模式传送到coll2
+transform (coll1.cbegin(),coll1.cend(), // source
+    back_inserter(coll2), // destination
+// 定义一个函数对象,会将传入的第一实参乘以10
+// 他允许你借由 底层的函数对象 和 占位符 合成 高层的函数对象
+    bind(multiplies<int>(),_1,10)); // operation
+```
+
+你还可以这样:
+
+```c++
+auto f=bind(multiplies<int>(),_1,10);
+cout<<f(99)<<endl;//990
+```
+
+```c++
+//从coll2里的元素 第一实参与70比较
+//bind()调用equal_to<int>(),并把他所收到的第一参数作为后者的第一实参,以70作为第二实参
+repalce_if(coll2.begin(),coll2.end(),bind(equal_to<int>(),_1,70),42);
+```
+
+## Chapter 7  STL容器
+
+### 容器的共通能力和共通操作
+
+* 所有容器提供的都是"value语义"而不是"reference语义".
+* 元素在容器里尤其特定的顺序.
+* 一般来说,各项操作并不安全,他们不会检查每一个可能发生的错误.
+
+#### 初始化
+
+```c++
+const std::vector<int> v1={1,2,3,4,5,6,7,8,9};
+const std::vector<int> v2 {1,2,3,4,5,6,7,8,9};
+```
+
+针对某个给定区间而写的构造函数,提供来自另一容器元素为初值的能力.这个构造函数是个`member template`.所以不只是容器,连元素类型都不同.
+
+* 以另一个容器为初值,完成初始化动作.
+
+  ```c++
+  std::list<int> l;
+  vector<float> c(l.begin(),l.end());
+  ```
+
+  或者C++11以后你还可以在这种情况下使用一个`move`迭代器来搬移元素:
+
+  ```c++
+  std::vector<std::string> c(std::make_move_iterator(l.begin()),std::make_move_iterator(l.end()));
+  ```
+
+* 以标准输入设备完成初始化动作:
+
+  ```c++
+  std::deque<int> c{ std::istream_iterator<int>(std::cin),std::istream_iterator<int>() };//推荐,不会产生歧义
+  std::deque<int> c((std::istream_iterator<int>(std::cin)),(std::istream_iterator<int>()));//没有小括号,会报错!
+  std::deque<int> c(std::istream_iterator<int>(std::cin),std::istream_iterator<int>());//默认为函数,返回类型:deque,
+  //第一参数类型是std::istream_iterator<int>,参数名是cin
+  //第二参数无名称,类型是一个函数,不接受实参,返回类型是std::istream_iterator<int>
+  ```
+
+#### 赋值和swap()
+
+建议用move赋值语义.
+
+```c++
+std::vector<int> v1;
+std::vector<int> v2;
+...
+// move contents of v1 into v2, state of v1 undefined afterward
+v2 = std::move(v1);
+```
+
+#### 与大小相关的操作函数
+
+1. empty():尽量用,常量时间复杂度
+2. size()
+3. max_size() 返回索引类型的最大值.
+
+#### 比较
+
+除了无序容器,常用的比较操作符`== != < > <= >=`,依据下面3个规则定义出来:
+
+1. 比较两端(容器)必须是同一类型.
+2. 如果容器的所有元素依序相等,那么这两个容器亮灯.
+3. 采用**字典式比较**来判断某个容器是否小于另一个.
+
+无序容器自定义`== !=`,但容器内每个元素在另一个容器内右相等的元素,这些操作就返回true.
+
+#### 元素访问
+
+* 所有的容器都支持迭代器接口,也就是支持:
+
+  ```c++
+  for (const auto& elem : coll) {
+  	std::cout << elem << std::endl;
+  }
+  //To be able to manipulate the elements, you should skip the const:
+  for (auto& elem : coll) {
+  	elem = ...;
+  }
+  ```
+
+* 如果想要获得位置其后可以操作(比如安插,删除,移动):
+
+  ```c++
+  for (auto pos=coll.cbegin(); pos!=coll.cend(); ++pos) {
+  	std::cout << *pos << std::endl;
+  }
+  //and iterators yielded by begin() and end() for write access:
+  for (auto pos=coll.begin(); pos!=coll.end(); ++pos) {
+  	*pos = ...;
+  }
+  //c++11 之前,必须先声明迭代器
+  colltype::const_iterator pos;
+  for (pos=coll.begin(); pos!=coll.end(); ++pos) {
+  	...;
+  }
+  ```
+
+如果删除元素,所有容器(除了vector和deque)都保证迭代器以及引用继续保持有效.但对于vector,只有删除点之前的元素才保持有效.
+
+如果安插元素,vector如果发生重新分配内存,那么迭代器以及引用无效.
+
+### Array
+
+观念上的array是指一系列元素,有着固定的大小.因此,你无法增加或移除元素而改变大小.他只允许你替换元素值.
+
+Array不支持(也就是不允许你指定)分配器(allocator).
+
+![array](pic/array.png)
+
+```c++
+namespace std{
+    template <typename T,size_t N>
+    class array;
+}
+```
+
+以下笼统的讲一下`Array`细节
+
+```c++
+//*1. array<>是唯一一个"无任何东西被指定为初值时,会被"预初始化"的容器",则意味着,初值可能不明确,而不是0
+array<int,4> x;//OOPS:x没有定义的值
+//你可以这样给他提供一个空白初值列,保证初始化,基础类型为0
+array<int,4> x={};//OK 所有元素都为0
+//*2. 如果初值列没有足够的元素,默认为0
+std::array<int,10> c2 = { 42 }; // one element with value 42 followed by 9 elements with value 0
+std::array<int,5> c3 = { 1, 2, 3, 4, 5, 6 }; // ERROR: too many values
+std::array<int,5> a({ 1, 2, 3, 4, 5, 6 }); // ERROR
+std::vector<int> v({ 1, 2, 3, 4, 5, 6 }); // OK
+//*3. 大小
+std::array<Elem,0> coll; // array with no elements
+std::sort(coll.begin(),coll.end()); // OK (but has no effect)
+coll[5] = elem; // RUNTIME ERROR ⇒ undefined behavior
+std::cout << coll.front(); // RUNTIME ERROR ⇒ undefined behavior
+```
+
+元素访问:
+
+![array_at](pic/array_at.png)
+
+**只有`c.at(idx)`执行了范围检查!**
+
+Examples of Using Arrays
+
+```c++
+The following example shows a simple use of class array<>:
+// cont/array1.cpp
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include "print.hpp"
+using namespace std;
+int main()
+{
+    // create array with 10 ints
+    array<int,10> a = { 11, 22, 33, 44 };
+    PRINT_ELEMENTS(a);
+    // modify last two elements
+    a.back() = 9999999;
+    a[a.size()-2] = 42;
+    PRINT_ELEMENTS(a);
+    // process sum of all elements
+    cout << "sum: "<< accumulate(a.begin(),a.end(),0)<< endl;
+    // negate all elements
+    transform(a.begin(),a.end(), // source
+    a.begin(), // destination
+    negate<int>()); // operation
+    PRINT_ELEMENTS(a);
+}
+//11 22 33 44 0 0 0 0 42 999999
+//sum:10000151
+```
+
+### Vector
+
+```c++
+namespace std{
+    template<typename T,typename Allocator= allocator<T>>
+    class vector;
+}
+```
+
+#### vector 的能力
+
+* vector支持随机访问,常量时间访问.
+* vector提供随机访问迭代器,所以使用任何STL算法.
+
+##### 大小(Size)和容量(Capacity)
+
+`capacity()`:返回vector实际能容纳的元素量.如果超出这个量,vector就有必要重新分配内存.
+
++ Reallocation invalidates all references, pointers, and iterators for elements of the vector.
++ Reallocation takes time.
+
+你可以使用`reserve()`保留适量容量,避免内存分配.`v.reserve(80);`
+
+或者,初始化期间就向构造函数传递额外实参,构建足够的空间:`std::vector<T> v(5);`但是,如果类型是个非常复杂的对象,初始化也非常耗时.还不如使用`reserve()`.
+
+不过会很浪费内存.(具体看Effective STL $17).
+
+C++11引入了一个vector新函数:一个**不具强制力**的要求,可以缩减容量以符合当前元素个数.`v.shrink_to_fit()`,这个要求不具强制力,以便为实现可能的特有优化保留回旋余地.因此你不可期望之后的`v.capacity==v.size() `为 true.
+
+**在C++11之前,有一个实现缩减vector容量的小窍门:两个vector交换内容后,两者的容量也互换.**
+
+```c++
+template<typename T>
+void shrinkCapacity(std::vector<T>& v){
+    std::vector<T> temp(v);//copy v to tmp
+    v.swap(tmp);
+}
+```
+
+你甚至可以直接这样缩减容量:
+
+```c
+std::vector<T>(v).swap(v);
+```
+
+![vector](pic/vector.png)
+
+##### 元素访问
+
+**元素访问对于调用者来说,最重要的是搞清楚这些操作是否执行范围检查.只有`at`那么做,如果越界,抛出`out_of_range`异常.其他函数不做检查,如果对一个空`vector`调用`operator [ ], front(), and back()`则会引发不明确的行为.**
+
+所以:调用`operator []`心里必须有数,确保索引有效;调用`front() or back()`必须确保容器不为空.
+
+##### 安插和移除
+
+关于效能,以下情况你可与预期安插动作和移除动作会比较快:
+
++ 在容器尾部安插或移除元素.
++ 容量一开始就够大
++ 安插多个元素时,**调用一次**比**调用多次**来的快
+
+安插或移除,都会使"作用点"之后的各元素的引用.指针.迭代器失效!
+
+vector并没有直接函数可以移除"与某值相等"的所有元素.这就是算法发挥的时候了:
+
+```c++
+std::vector<Elem> coll;
+coll.erase(remove(coll.begin(),coll.end(),val),coll.end());
+//如果只是移除相等的第一个元素
+std::vector<Elem>::iterator pos;
+pos=find(coll.begin(),coll.end(),val);
+if(pos!=coll.end())
+    coll.erase(pos);
+```
+
+![vector_push](pic/vector_push.png)
+
+[关于`emplace`与`push`区别](https://github.com/HitLumino/studynotes/blob/master/C%2B%2B_one_month_project/C%2B%2BPrimer.md#1notes-%E5%AF%B9%E6%AF%94push%E5%92%8Cemplace%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0)
+
+##### Examples
+
+```c++
+// cont/vector1.cpp
+#include <vector>
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <iterator>
+using namespace std;
+int main()
+{
+    // create empty vector for strings
+    vector<string> sentence;
+    // reserve memory for five elements to avoid reallocation
+    sentence.reserve(5);
+    // append some elements
+    sentence.push_back("Hello,");
+    sentence.insert(sentence.end(),{"how","are","you","?"});
+    // print elements separated with spaces
+    copy (sentence.cbegin(), sentence.cend(),
+    ostream_iterator<string>(cout," "));
+    cout << endl;
+    // print ‘‘technical data’’
+    cout << " max_size(): " << sentence.max_size() << endl;
+    cout << " size(): " << sentence.size() << endl;
+    cout << " capacity(): " << sentence.capacity() << endl;
+    // swap second and fourth element
+    swap (sentence[1], sentence[3]);
+    // insert element "always" before element "?"
+    sentence.insert (find(sentence.begin(),sentence.end(),"?"),
+    "always");
+    // assign "!" to the last element
+    sentence.back() = "!";
+    // print elements separated with spaces
+    copy (sentence.cbegin(), sentence.cend(),
+    ostream_iterator<string>(cout," "));
+    cout << endl;
+    // print some ‘‘technical data’’ again
+    cout << " size(): " << sentence.size() << endl;
+    cout << " capacity(): " << sentence.capacity() << endl;
+    // delete last two elements
+    sentence.pop_back();
+    sentence.pop_back();
+    // shrink capacity (since C++11)
+    sentence.shrink_to_fit();
+    // print some ‘‘technical data’’ again
+    cout << " size(): " << sentence.size() << endl;
+    cout << " capacity(): " << sentence.capacity() << endl;
+}
+```
+
+##### `Class vector<bool>`
+
