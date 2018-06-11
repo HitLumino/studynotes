@@ -26,6 +26,18 @@
                 - [移动右值,拷贝左值....](#%E7%A7%BB%E5%8A%A8%E5%8F%B3%E5%80%BC%E6%8B%B7%E8%B4%9D%E5%B7%A6%E5%80%BC)
                 - [但没有移动构造函数,右值也被拷贝...](#%E4%BD%86%E6%B2%A1%E6%9C%89%E7%A7%BB%E5%8A%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%8F%B3%E5%80%BC%E4%B9%9F%E8%A2%AB%E6%8B%B7%E8%B4%9D)
                 - [右值引用和成员函数](#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%92%8C%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0)
+    - [动态内存](#%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98)
+        - [动态内存和智能指针](#%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%92%8C%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88)
+            - [shared_ptr类](#sharedptr%E7%B1%BB)
+                - [make_shared 函数](#makeshared-%E5%87%BD%E6%95%B0)
+                - [`shared_ptr`的拷贝和赋值](#sharedptr%E7%9A%84%E6%8B%B7%E8%B4%9D%E5%92%8C%E8%B5%8B%E5%80%BC)
+                - [shared_ptr自动销毁所管理的对象......](#sharedptr%E8%87%AA%E5%8A%A8%E9%94%80%E6%AF%81%E6%89%80%E7%AE%A1%E7%90%86%E7%9A%84%E5%AF%B9%E8%B1%A1)
+                - [......shared_ptr还会自动释放相关联的内存](#sharedptr%E8%BF%98%E4%BC%9A%E8%87%AA%E5%8A%A8%E9%87%8A%E6%94%BE%E7%9B%B8%E5%85%B3%E8%81%94%E7%9A%84%E5%86%85%E5%AD%98)
+                - [使用动态生存期的资源的类](#%E4%BD%BF%E7%94%A8%E5%8A%A8%E6%80%81%E7%94%9F%E5%AD%98%E6%9C%9F%E7%9A%84%E8%B5%84%E6%BA%90%E7%9A%84%E7%B1%BB)
+            - [直接管理内存](#%E7%9B%B4%E6%8E%A5%E7%AE%A1%E7%90%86%E5%86%85%E5%AD%98)
+                - [使用new动态分配和初始化对象](#%E4%BD%BF%E7%94%A8new%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AF%B9%E8%B1%A1)
+                - [动态分配的const对象](#%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E7%9A%84const%E5%AF%B9%E8%B1%A1)
+                - [释放动态内存](#%E9%87%8A%E6%94%BE%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98)
 
 <!-- /TOC -->
 # C++ Primer
@@ -394,3 +406,218 @@ vec.push_back(s);//调用的是拷贝
 vec.push_back("done");//调用的移动
 ```
 差别在于实参是左值还是右值(从"done"创建临时的string)
+
+## 动态内存
+
+除了静态内存和栈内存,每个程序还拥有内存池.
+
++ 静态内存和栈内存:
+  + 静态内存用来保存局部`static`对象/类`static`数据成员以及定义在任何函数之外的变量.
+  + 栈内存用来保存定义在函数内部非`static`对象.
+  + 分配在静态或者栈内存中的对象由编译器自动创建和销毁.
+  + 对于栈对象只有在其定义的程序块运行时才存在.
+  + `static`在使用之前分配,在程序结束时销毁.
++ 内存池:
+  + 这部分内存被称为**自由空间或堆**.
+  + 程序用堆来储存**动态分配**的对象,即在程序运行时分配的对象.
+  + 动态对象的生存周期由程序来控制,也就是说,当动态对象不再使用了,我们的代码必须显式的销毁他们.
+
+### 动态内存和智能指针
+
+在C++中,动态内存的管理是通过一对运算符来完成的:`new`和`delete`.
+
+* 忘记释放,会造成内存泄漏.
+* 提前释放,会导致引用非法内存的指针.
+
+新标准提供了两种智能指针类型来管理动态对象.(都定义在memory头文件里)
+
++ `shared_ptr`允许多个指针指向同一个对象
++ `unique_ptr`**独占**所指向的对象.
++ `weak_ptr`:伴随类,它是一种弱引用,指向`shared_ptr`所管理的对象.
+
+#### shared_ptr类
+
+![](pic/share_ptr.png)
+
+```c++
+shared_ptr<string> p1;
+shared_ptr<vector<int>> p2;
+
+//检查她是否为空
+if(p1&&p1->empty())
+    *p1="hi";//如果p1指向一个空string,建一个新值付给他
+```
+
+##### make_shared 函数
+
+最安全的分配和使用动态内存的方法就是调用`make_shared`的标准函数.使用时,必须像`shared_ptr`一样指明类型.
+
+```c++
+shared_ptr<int> p3=make_shared<int>42;
+shared_ptr<sting> p4=make_shared<string> (10,'9');//p4指向`999999999`的string
+shared_ptr<int> p5=make_shared<int>();//默认初始化  内置类型  0
+```
+
+通常我们用`auto`定义一个对象来保存`make_shared`的结果.
+
+```c++
+auto p6=make_shared<vector<string>>();
+```
+
+##### `shared_ptr`的拷贝和赋值
+
+当我们进行拷贝或者赋值时,每个`shared_ptr`都会记录有多少个其他`shared_ptr`指向相同的对象.
+
+```C++
+auto p=make_shared<int> 42; //此时p指向的对象只有一个引用者
+auto q(p); //p和q指向同一个对象 2
+```
+
+当我们赋予一个`shared_ptr`新值或者销毁时(例如一个局部的`shared_ptr`离开其作用域时),计数器就会递减.一旦一个`shared_ptr`的计数器变为0,他就会自动释放自己所管理的对象:
+
+```c++
+auto r=make_shared<int> (42);//r指向的只有一个引用者
+r=q;//递增q指向的对象的引用计数;递减r原来指向的对象的引用计数;r原来的对象没有引用者,自动释放.
+```
+
+##### shared_ptr自动销毁所管理的对象......
+
+* shared_ptr的析构函数会递减它所指向的对象的引用计数.如果计数为0,shared_ptr的析构函数就会销毁对象,并释放它占用的内存.
+
+##### ......shared_ptr还会自动释放相关联的内存
+
+shared_ptr类会自动释放动态对象,这一特性使得动态内存的使用变得十分容易. 
+
+```c++
+//Foo类型的动态分配的对象,对象是通过一个类型为T的参数进行初始化
+//factory返回一个shared_ptr,指向一个动态分配的对象
+shared_ptr<Foo> factory(T arg){
+    return make_shared<Foo>(arg);
+    //由于返回的是shared_ptr,我们可以确保他分配的对象会在恰当的时候被释放.
+}
+```
+
+例如:
+
+```c++
+void use_factory(T arg){
+    shared_ptr<Foo> p=factory(arg);
+    //当p离开作用域,p被销毁时,将递减其引用计数并检查是否为0.
+    //p是唯一引用facyory返回的内存对象.所以,p指向的对象也被销毁.
+}
+```
+
+但是,如果有其他shared_ptr也指向这块内存,他就不会被释放:
+
+```c++
+void use_factory(T arg){
+    shared_ptr<Foo> p=factory(arg);
+    return p;//返回p时,引用计数进行了递增操作  p的拷贝
+    //p离开作用域,p销毁,但所指的对象不会.
+}
+```
+
+Notes: 如果你将``shared_ptr存放在容器里,而后不再需要全部元素,而只使用其中一部分,要记得用`erase`删除不再需要的那些元素.
+
+##### 使用动态生存期的资源的类
+
+程序使用动态内存出于一下三种原因之一:
+
+1. 程序不知道自己需要使用多少对象
+2. 程序不知道所需对象的准确类型
+3. 程序需要在多个对象间共享数据
+
+我们将定义一个类,它使用动态内存是为了让多个对象能够共享数据.
+
+```c++
+class StrBlob{
+public:
+    typedef std::vector<std::string>::size_type size_type;
+    StrBlob();
+    StrBlob(std::initializer_list<std::string> il);//接受一个初始化器的花括号列表
+    size_type size() const {return data->size();}
+    bool empty() const {return data->empty();}
+    void push_back(const std::string &t) {data->push_back(t);}
+    void pop_back();
+    std::string& front();
+    std::string& back();
+private:
+    std::shared_ptr<std::vector<std::string>> data;
+    void check(size_type i, const std::string &msg) const;
+}
+
+//构造函数
+StrBlob::StrBlob():data(make_shared<std::vector<std::string>>()) { }
+StrBlob::StrBlob(std::initializer_list<std::string> il):data(make_shared<std::vector<string>>(il)) { }
+//check()
+void StrBlob::check(size_type i, const std::string &msg) const{
+    if(i>=data->size())
+        throw out_of_range(msg);
+}
+//pop_back()
+string& StrBlob::front(){
+	check(0,"front on empty StrBlob!");
+    return data->front();
+}
+```
+
+#### 直接管理内存
+
+##### 使用new动态分配和初始化对象
+
+```c++
+string *ps1=new string;//默认初始化为空 string
+string *ps=new string();//值初始化为空string
+int *pil=new int;  //默认初始化; *pil的值未定义
+int *pi2=new int(); //值初始化为0;*pi2为0
+```
+
+##### 动态分配的const对象
+
+一个动态分配的`const`对象必须初始化.
+
+```c++
+//new分配const对象是合法的:
+const int *pci new const int(1024);
+//分配并默认初始化一个const的空string
+const string *pcs=new const string;
+```
+
+由于分配的对象是`const`的,`new`返回的指针是一个指向`const`的指针.
+
+##### 释放动态内存
+
+`delete`表达式也执行两个动作: 销毁给定的指针指向的对象;释放对应的内存.
+
+传给`delete`的指针必须指向**动态分配的内存**,或者是一个**空指针**.
+
+释放一块并非`new`分配的内存,或者将相同的指针值释放多次,其行为是未定义的:
+
+```c++
+int i,*pil=&i,*pi2=nullptr;
+double *pd=new double(33),*pd2=pd;
+delete i;//ERROR     i不是一个指针
+delete pil;//ERROR   pil指向一个局部变量(不是动态分配的内存)
+delete pd;// OK
+delete pd2;//ERROR   pd2指向的内存已经被释放了
+delete pi2; //OK     释放一个控制住总是没有错误的
+const int *pci=new const int(1024);
+delete pci;//OK 释放一个const 对象
+```
+* 执行`delete pil 和pd2`所产生的错误更具有潜在危害:通常情况下,编译器不能分辨一个指针指向的是静态还是动态的对象.
+* 编译器也不能分辨一个指针所指向的内存是否已经释放.
+
+对于通过内置指针类型来管理的内存,他直到被显式地释放之前一直存在.(不同于智能指针)
+
+返回指向动态内存的指针(不是智能指针)的函数给其调用者增加了一个额外负担----调用者必须记得释放内存.
+
+```c++
+Foo* factory(T arg){
+    return new Foo(arg);//调用者需要释放此内存
+}
+void use_factory(T arg){
+    Foo *p=factory(arg);//使用*p但是不delete他
+}//p离开了他的作用域,但是它所指向的内存并没有释放!
+```
+
+当一个指针离开其作用域时,他所指向的对象什么也没有发生.如果这个指针指向的动态内内存,那么内存将不会被释放!
