@@ -38,6 +38,20 @@
                 - [使用new动态分配和初始化对象](#%E4%BD%BF%E7%94%A8new%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AF%B9%E8%B1%A1)
                 - [动态分配的const对象](#%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E7%9A%84const%E5%AF%B9%E8%B1%A1)
                 - [释放动态内存](#%E9%87%8A%E6%94%BE%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98)
+                - [[2]内存分区问题注释](#2%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E9%97%AE%E9%A2%98%E6%B3%A8%E9%87%8A)
+                - [delete之后重置指针值...](#delete%E4%B9%8B%E5%90%8E%E9%87%8D%E7%BD%AE%E6%8C%87%E9%92%88%E5%80%BC)
+            - [`shared_ptr`和`new`一起使用](#sharedptr%E5%92%8Cnew%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8)
+                - [不要混合使用普通指针和智能指针](#%E4%B8%8D%E8%A6%81%E6%B7%B7%E5%90%88%E4%BD%BF%E7%94%A8%E6%99%AE%E9%80%9A%E6%8C%87%E9%92%88%E5%92%8C%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88)
+                - [也不要使用get初始化另一个智能指针或为智能指针赋值](#%E4%B9%9F%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8get%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%A6%E4%B8%80%E4%B8%AA%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%88%96%E4%B8%BA%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%B5%8B%E5%80%BC)
+                - [其他shared_ptr操作](#%E5%85%B6%E4%BB%96sharedptr%E6%93%8D%E4%BD%9C)
+            - [智能指针和异常](#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%92%8C%E5%BC%82%E5%B8%B8)
+                - [使用自己的释放操作(deleter)](#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E9%87%8A%E6%94%BE%E6%93%8D%E4%BD%9Cdeleter)
+            - [`unique_ptr`](#uniqueptr)
+                - [向`unique_ptr`传递`deleter`](#%E5%90%91uniqueptr%E4%BC%A0%E9%80%92deleter)
+            - [`weak_ptr`](#weakptr)
+            - [allocator类](#allocator%E7%B1%BB)
+                - [allocator 分配未构造的内存](#allocator-%E5%88%86%E9%85%8D%E6%9C%AA%E6%9E%84%E9%80%A0%E7%9A%84%E5%86%85%E5%AD%98)
+                - [拷贝和填充未初始化内存的算法](#%E6%8B%B7%E8%B4%9D%E5%92%8C%E5%A1%AB%E5%85%85%E6%9C%AA%E5%88%9D%E5%A7%8B%E5%8C%96%E5%86%85%E5%AD%98%E7%9A%84%E7%AE%97%E6%B3%95)
 
 <!-- /TOC -->
 # C++ Primer
@@ -106,7 +120,7 @@ class Foo{
 
 * 如果一个构造函数的第一个参数是自身类型的引用，且任何额外参数都有默认值，那么这就是拷贝构造函数．
 * 如果一个类有一个移动构造函数，则拷贝初始化有时会使用移动构造函数而非拷贝构造函数来完成.
-* **拷贝初始化**不仅在`=``定义变量时发生,在以下情况也会发生:(P441)
+* **拷贝初始化**不仅在`=`定义变量时发生,在以下情况也会发生:(P441)
     * 将一个对象作为实参传递给一个非引用类型的形参  (传值)
     * 从一个返回类型为非引用类型的函数返回一个对象  (不是返回引用)
     * 用花括号列表初始化一个数组中的一个元素或一个聚合类中的成员
@@ -621,3 +635,292 @@ void use_factory(T arg){
 ```
 
 当一个指针离开其作用域时,他所指向的对象什么也没有发生.如果这个指针指向的动态内内存,那么内存将不会被释放!
+
+接着,那怎么销毁内存呢?什么时候销毁?
+
+一旦`use_factory`返回,程序就无法释放这块内存了.根据程序的逻辑,修正bug应该在`use_factory`中释放内存.
+
+```c++
+void use_factory(T arg){
+    Foo *p=factory(arg);//p 局部变量 ,离开作用域就被销毁.
+    delete p;
+}
+```
+
+还有一种可能,我们其他代码需要使用`use_factory`所分配的对象,我们就应该修改此函数,让他返回一个指针,指向他的内存:
+
+```c++
+Foo* use_factory(T arg){
+    Foo *p =factory(arg);
+    //使用p
+    return p;//调用者必须释放内存
+}
+```
+
+##### [2]内存分区问题注释
+
+**在C++中，内存分成5个区，他们分别是堆、栈、自由存储区、全局/静态存储区和常量存储区。**
+
++ 栈，就是那些由编译器在需要的时候分配，在不需要的时候自动清楚的变量的存储区。里面的变量通常是局部变量、函数参数等。
++ 堆，就是那些由`new`分配的内存块，他们的释放编译器不去管，由我们的应用程序去控制，一般一个`new`就要对应一个`delete`。如果程序员没有释放掉，那么在程序结束后，操作系统会自动回收。
++ 自由存储区，就是那些由`malloc`等分配的内存块，他和堆是十分相似的，不过它是用`free()`来结束自己的生命的。
++ 全局/静态存储区，**全局变量**和**静态变量**被分配到同一块内存中，在以前的C语言中，全局变量又分为初始化的和未初始化的，在C++里面没有这个区分了，他们共同占用同一块内存区。
++ 常量存储区，这是一块比较特殊的存储区，他们里面存放的是常量，不允许修改（当然，你要通过非正当手段也可以修改，而且方法很多）
+
+```c++
+//1. 返回局部变量本身 
+//原因：返回值是拷贝值，局部变量的作用域为函数内部，函数执行结束，栈上的局部变量会销毁，内存释放。
+int sum(int a, int b)
+{
+    int s=a+b;
+    return s;
+}
+//正确 2.常量：
+char* returnValue()  
+{  
+    char* str="HelloJacky";  
+    return str;  
+}  
+//错误
+char* returnValue()  
+{  
+    char str[]="HelloJacky";  ////str 为局部变量
+    return str;  
+} 
+//正确  3. 静态局部变量
+char* returnValue()  
+{  
+    static char str[]="HelloJacky";  
+    return str;  
+} 
+
+//4. 堆内存中的局部变量 new
+char* newMemory(int size)
+{
+    char* p=NULL;
+    p=new char[size];
+    cout<<&p<<endl;
+    return p;
+}
+
+int main()
+{
+    char* p=newMemory(2);
+    if(p!=NULL)
+    {
+        *p='a';
+    }
+    std::cout<<*p<<endl;
+    cout<<&p<<endl;
+    delete [] p;
+    return 0;
+}
+```
+
+小心:动态内存管理非常容易出错
+
+1. 忘记delete内存.-->内存泄漏问题.因为他永远也不会将内存归还给自由空间.查找也非常困难,因为只有程序运行很长时间,真正耗尽内存时,才会检测到这种错误.
+2. 使用已经释放掉的对象.只有在释放后的的指针置空,有时可以检查出这种错误.
+3. 同一块内存释放两次.
+
+##### delete之后重置指针值...
+
+我们delete指针之后,指针值变得无效了.虽然指针已经无效,但还保存着动态内存的地址.-->`空悬指针`,即指向一块无效的内存. 需要重新赋值`nullptr`.
+
+但是可能有多个指针指向相同的内存.在`delete`之后重置指针只对这个指针有效,对其他任何仍然指向(已释放)的内存的指针是没有作用的!
+
+#### `shared_ptr`和`new`一起使用
+
+我们可以使用new返回的指针来初始化智能指针:
+
+接受指针参数的智能指针的构造函数是`explict`的,我们不能将一个内置指针隐式转换成一个智能指针.必须使用`直接初始化`形式(**不能用`=`:拷贝**):
+
+```c++
+shared_ptr<int> p1=new int(42);//ERROR 必须使用直接初始化的形式
+shared_ptr<int> p2(new int(42));//OK
+```
+
+由于同样的原因,一个返回`shared_ptr`的函数不能在其返回语句隐式转换一个普通指针:
+
+```c++
+shared_ptr<int> clone(int p){
+    return new int(p);//ERROR 
+    return shared_ptr<int>(new int(p));//显式的用int*创建shared_ptr<int>
+    return make_shared<int>(p);
+}
+```
+
+![shared_ptr_change](pic/shared_ptr_change.png)
+
+![change](pic/change.png)
+
+##### 不要混合使用普通指针和智能指针
+
+使用一个内置指针来访问智能指针所负责的对象是危险的,因为我们无法知道对象何时会被销毁.
+
+##### 也不要使用get初始化另一个智能指针或为智能指针赋值
+
+get():返回一个内置指针,指向智能指针管理的对象.
+
+使用get返回的指针的代码不能`delete`此指针.
+
+```c++
+shared_ptr<int> p(new int(42));
+int *q=p.get();//OK  
+{
+    shared_ptr<int> (q);
+}//程序块结束,q被销毁,他指向的内存被释放
+int foo=*p;//未定义.p指向的内存被释放
+```
+
+##### 其他shared_ptr操作
+
+```c++
+p=new int(1024);//ERROR
+p.reset(new int(1024));//OK  p 指向一个新对象
+```
+与赋值类似,`reset`也会更新引用计数.`reset`成员经常与`unique`一起使用,来控制多个`shared_ptr`共享的对象.在改变底层对象之前,我们检查自己是否是当前对象仅有的用户.如果不是,还需要在改变之前制作一份新的拷贝:
+
+```c++
+if(!p.unique()){
+    p.reset(new string(*P));//我们不是唯一用户,分配新的拷贝
+}
+*p+=newVal;//现在我们知道自己是唯一用户,可以改变对象的值
+
+```
+
+#### 智能指针和异常
+
+```c++
+void f(){
+    shared_ptr<int> sp(new int(42));
+    //这段代码抛出一个异常,且在f中未被捕获
+};//函数结束时,shared_ptr自动释放内存
+
+void f(){
+    int *ip=new int(42);
+    ////这段代码抛出一个异常,且在f中未被捕获
+    delete ip;//退出之前,释放内存
+}
+```
+如果在`new`和`delete`之间发生异常,且异常未被捕获,则内存就永远不会被释放了.在函数f之外没有指针指向这块内存,因此无法释放.
+
+##### 使用自己的释放操作(deleter)
+
+如果你使用的是智能指针管理的资源,而不是`new`分配的内存,记住传递给它一个`deleter`.
+
+#### `unique_ptr`
+
+一个`unique_ptr`拥有他所指的对象.与`shared_ptr`不同,某个时刻只能有一个`unique_ptr`指向一个给定对象.当`unique_ptr`被销毁时,它所指向的的对象也被销毁.
+
+没有类似`make_shared`函数返回一个`unique_ptr`.我们只能绑定到一个`new`返回的指针上,且**必须**直接初始化.
+
+```c++
+unique_ptr<int> p1;
+unique_ptr<int> p2(new int(42));
+```
+
+由于`unique_ptr`拥有对象,所以不支持普通的拷贝或赋值操作:
+
+```c++
+unique_ptr<string> p1(new string("more"));
+unique_ptr<string> p2(p1);//ERROR
+unique_ptr<string> p3;
+p3=p2;//ERROR
+```
+
+虽然我们不能拷贝或赋值`unique_ptr`,但我们可以调用`reset`或`release`将指针所有权从一个(非const)的`unique_ptr`转移到另一个`unique_ptr`.
+
+```c++
+unique_ptr<string> p2(p1.release());//转移p2
+unique_ptr<string> p3(new string("none"));
+p2.reset(p3.release());//reset 释放了p2原来指向的内存,release转移
+```
+
+`release()`:  
+
++ 返回当前保存的`unique_ptr`指针,并且将其置空.因此,p2被初始化为p1原来保存的指针,而p1被置空.
+
++ 调用`release()`会切断他与原来对象的联系.
+
++ 返回的指针通常用来初始化另一个智能指针或赋值;如果不用另一个智能指针来保存`release`返回的指针,我们的程序就要负责资源的释放:
+
+  ```c++
+  p2.release();//ERROR  p2不会释放内存,而且我们失去了指针
+  auto p=p2.release();//OK 但我们必须记得delete(p)
+  ```
+
+`reset()`:接受一个可选的指针参数,令`unique_ptr`重新指定给定的指针.如果不为空,原来的对象被释放.
+
+#####　传递`unique_ptr`参数和返回`unique_ptr`
+
+移动拷贝可以.
+
+##### 向`unique_ptr`传递`deleter`
+
+重载一个`unique_ptr`中的`deleter`会影响到`unique_ptr`类型以及如何构造该类型的对象.我们必须在尖括号里提供删除器类型.
+
+#### `weak_ptr`
+
+```c++
+auto p =make_shared<int>(42);
+weak_ptr<int> wp(p);//wp弱共享p;p的引用计数未改变
+```
+
+#### allocator类
+
+`new`将内存分配和对象构造组合在一起;`delete`将内存释放和对象析构组合在一起.
+
+标准库`allocator`类定义在头文件`memory`里,他帮我们将内存分配和对象构造分开.他提供了一种类型感知的内存分配方法,他分配的内存是原始的/未构造的.
+
+类似`vector`,`allocator`是一个模板.为了定义一个`allocator`,我们必须指明对象类型.
+
+根据给定的对象类型来确定恰当的内存大小和对齐位置:
+
+```c++
+allocator<string> alloc;
+auto const p=alloc.allocate(n);//分配n个未初始化的string
+```
+
+![allocator](pic/allocator.png)
+
+##### allocator 分配未构造的内存
+
+allocator 分配的内存是未构造的.我们按照需要在此内存中构造对象.在新标准库中,`construct`成员函数接受一个指针和0个或多个额外参数,在给定位置构造一个元素.额外参数用来初始化构造的对象.
+
+```c++
+auto q=p;//q指向最后构造的元素之后的位置
+alloc.construct(q++);//*q为空字符串
+alloc.construct(q++,10,'c');//*q为cccccccccc
+allloc.construct(q++,"hi");//*q为hi
+```
+
+
+
+为了使用`allocator`返回的内存,我们必须用construct构造对象.使用未构造的内存,其行为是未定义的.
+
+当我们用完每个对象后,必须对每个构造函数的元素调用`destroy`来销毁他们.函数`destroy`接受一个指针,对指向的对象执行析构函数.
+
+```c++
+while(q!=p)
+    alloc.destory(--q);//释放我们真正构造的string
+```
+
+一旦元素被销毁后,就可以重新使用这部分内存来保存其他string,也可以将其归还给系统.释放内存通过调用`deallocate`来完成:
+
+```C++
+alloc.deallocate(p,n);//p不能为空,必须指向allocate分配的内存;n必须和分配时大小相同.
+```
+##### 拷贝和填充未初始化内存的算法
+
+![allocator_alog](pic/allocator_alog.png)
+
+```c++
+//分配比vi中元素空间大一倍的动态内存
+auto p =alloc.allocate(vi.size()*2);
+//通过拷贝元素来构造从p开始的元素
+auto q=unitialized_copy(vi.begin(),vi.end(),p);
+//将剩余元素初始化为42
+unitialized_fill_n(q,vi.size(),42);
+```
+
