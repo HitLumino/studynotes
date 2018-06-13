@@ -317,6 +317,104 @@ HasPtr& HasPtr::operator=(const HasPtr &rhs)
 
 令一个类展现类似指针的行为的最好办法是使用`shared_ptr`来管理类中的资源.拷贝(或赋值)一个`shared_ptr`会拷贝(或赋值)`shared_ptr`所指向的指针.
 
+### 动态内存管理类
+
+​	某些类需要在运行时分配可变大小的内存空间.可以通过使用标准容器来处理,但是并不是每个类都适用.有些类需要定义自己的拷贝控制成员来管理所分配的内存.
+
+​	例如我们将实现标准库`vector`简化版本.我们不使用模板,我们只使用`string`.我们将使用一个`allocator`来获得原始内存(未构造的).我们将会在添加新元素时使用`construct`成员在原始内存里创建对象.类似的,当我们需要删除一个元素时,我们使用`destory`.
+
+每个StrVec有三个**指针成员**指向其元素所使用的内存:
+
++ `elements`,指向分配的内存中的首元素
++ `first_free`,最后实际元素之后的位置
++ `cap`,指向分配的内存末尾之后的位置
+
+除了这些指针外,还有一个名为`alloc`的静态成员,类型为`allocator<string>`.alloc成员会分配StrVec的内存.
+
+我们还有4个工具函数:
+
++ `alloc_n_copy`会分配内存,并拷贝一个给定范围的元素
++ `free`会销毁构造的元素并释放内存
++ `chk_n_alloc`保证StrVec至少容纳一个新元素的空间.如果没有空间添加新元素,`chk_n_alloc`会调用`reallocate`来分配更多的内存.
++ `reallocate`在内存用完时分配新内存.
+
+##### 实现
+
+```c++
+//vector类内存分配策略的简化实现
+class StrVec{
+public:
+    StrVec():elements(nullptr),first_free(nullptr),cap(nullptr){}
+    StrVec(const StrVec&);//copy construct
+    StrVec& operator=(const StrVec&);//拷贝赋值运算符
+    ~StrVec();
+    void push_back(const std::string&);
+    size_t size() const {return first_free-elements;}
+    size_t capacity() const {return cap-elements;}
+    std::string* begin() const {return elements;} 
+    std::string* end() const {return first_free;} 
+    ...
+private:
+    static std::allocator<std::string> alloc;//分配元素
+    void chk_n_alloc(){
+        if(size()==capacity()) reallocate();
+    }
+    std::pair<std::string*, std::string*> alloc_n_copy(const std::string*, const std::string* );
+    void free();
+    void reallocate();
+    std::string* elements;
+    std::string* first_free;
+    std::string* cap;
+}
+//用construct构造元素
+void StrVec::push_back(const string& s){
+    chk_n_alloc();
+    alloc.construct(first_free++,s);//递增
+}
+pair<string*, string*> StrVec::alloc_n_copy(const string* b, const string* e){
+    auto data=alloc.allocate(e-b);//分配内存
+    //初始化一个pair,该pair由data和...构成
+    //data 指向分配内存的开始位置
+    //uninitialized_copy(b,e,data):返回最后一个构造的下一个位置
+    return {data,uninitialized_copy(b,e,data)};//从迭代器b到迭代器e之间的元素,全部拷贝到data里
+}
+void StrVec::free(){
+    if(elements){//不能传给deallocate()一个空指针.
+        //逆序销毁旧元素
+        for(auto p=first_free;p!=elements;)
+            alloc.destroy(--p);//destroy会执行string的析构函数.string的析构函数会释放自己的内存.
+        alloc.deallocate(elements,cap-elements);
+    }
+}
+//拷贝构造函数
+StrVec::StrVec(const StrVec& s){
+    auto newdata=allocate_n_copy(s.begin(),s.end());
+    elements=newdata.first;
+    first_free=cap=newdata.second;//cap==first_free,这也说明了,copy()可以用作shrink_to_fit()
+}
+//析构函数
+StrVec::~StrVec(){
+    free();
+}
+//拷贝赋值
+StrVec& StrVec::operator=(const StrVec& s){
+    auto newdata=allocate_n_copy(s.begin(),s.end());
+    free();
+    elements=newdata.first;
+    first_free=cap=newdata.second;//cap==first_free,这也说明了,copy()可以用作shrink_to_fit()
+    return *this;
+}
+//reallocate 函数
+
+```
+
+* [c++: size_type与 size_t一些概念](https://blog.csdn.net/lzx_bupt/article/details/6558566)
+* 拷贝过后,cap==first_free,这也说明了,copy()可以用作shrink_to_fit()
+
+
+
+
+
 ### 对象移动
 标准库容器/string/shared_ptr类既支持移动也支持拷贝,IO类和unique_ptr类可以移动,但不支持拷贝.
 
@@ -923,4 +1021,50 @@ auto q=unitialized_copy(vi.begin(),vi.end(),p);
 //将剩余元素初始化为42
 unitialized_fill_n(q,vi.size(),42);
 ```
+
+这块在第13章再次讲到.
+
+#### 文本查询程序
+
+```c++
+class QueryResult;//为了定义函数query的返回类型,这个定义是必须的
+class TextQuery{
+public:
+    using line_no=vector<string>::size_type;
+    TextQuery(std::ifstream&);
+    QueryResult query(const std::string&) const;
+private:
+    std::shared_ptr<std::vector<std::string>> file;
+    std::map<std::string,std::shared_ptr<std::set<line_no>>> wm;
+};
+
+TextQuery::TextQuery(ifstream &is):file(new vector<string>){
+    string text;
+    while(getline(is,text)){
+        file->push_back(text);//保存此行文本
+        int n=file->size()-1;
+        istringstream line(text);
+        string word;
+        while(line>>word){
+            auto &lines=wm[word];
+            if(!lines)
+                lines.reset(new set<line_no>);//分配一个新的set
+            lines->insert(n);//将行号插入set中
+        }
+        
+    }
+}
+```
+
+由于`file`是一个`shared_ptr`我们用解引用符`->`解引用`file`来提取`file`指向的vector对象的`push_back`成员.
+
+未完待续...
+
+#####  [Notes: 使用using与typedef来定义的区别](https://www.cnblogs.com/yutongqing/p/6794652.html)
+
+在C++中，``using`与`typedef`这两个关键词是大家用的比较多的，using关键词用的最多的是``using namespace`的搭配如`using namespace std`;而typedef用来设为某个类型设置一个别名，如`typedef unsigned long long uint64;`不过，可能有些不知道，其实using也可以用来设置别名，在这种情况下，它与typedef所表述的意思没有区别。
+
+C++编译器不支持使用typedef关键词为模板类设置别名，但是使用using的方式声明一个关键词却是允许的，只是这个是C++11标准才有的，如果在编译时不加上--std=c++11使用新的标准的话，编译器一样会报错。
+
+
 
