@@ -105,7 +105,15 @@
  `typedef double wages;` 
  `using SI=Sale_Item;`
 
-## 搞清楚什么是拷贝/赋值拷贝/析构/三五法则/移动构造函数?
+
+
+## Chapter 7 类
+
+
+
+
+
+## Chapter 13 搞清楚什么是拷贝/赋值拷贝/析构/三五法则/移动构造函数?
 
 拷贝控制操作:5种.
 
@@ -409,13 +417,24 @@ StrVec& StrVec::operator=(const StrVec& s){
     return *this;
 }
 //reallocate 函数
-
+void StrVec::reallocate(){
+    auto newcapacity=size()?2*size():1;
+    auto newdata=alloc.allocate(newcapacity);
+    auto dest=newdata;//指向新数组下一个空闲位置
+    auto elem=elements;//指向旧数组下一个空闲位置
+    for(size_t i=0;i!=size();++i)
+        alloc.construct(dest++,std::move(*elem++));
+    free();//一旦我们移动完元素就释放旧内存
+    //更新我们的数据结构,执行新元素
+    elements=newdata;
+    first_free=dest;
+    cap=elements+newcapacity;
+}
 ```
 
 * [c++: size_type与 size_t一些概念](https://blog.csdn.net/lzx_bupt/article/details/6558566)
-* 拷贝过后,cap==first_free,这也说明了,copy()可以用作shrink_to_fit()
-
-
+* 拷贝过后,cap==first_free,这也说明了,copy()可以用作`shrink_to_fit()`.
+* `std::move`:当`reallocate`在新内存中构造string时,他必须调用`move`来表示希望使用`string`的移动构造函数.如果漏掉了,我们默认使用拷贝构造.其次,一般我们不为`move`提供`using`声明(p706).
 
 
 
@@ -523,7 +542,7 @@ vec.push_back("done");//调用的移动
 ```
 差别在于实参是左值还是右值(从"done"创建临时的string)
 
-## 动态内存
+## Chapter 12 动态内存
 
 除了静态内存和栈内存,每个程序还拥有内存池.
 
@@ -1069,6 +1088,329 @@ TextQuery::TextQuery(ifstream &is):file(new vector<string>){
 在C++中，``using`与`typedef`这两个关键词是大家用的比较多的，using关键词用的最多的是``using namespace`的搭配如`using namespace std`;而typedef用来设为某个类型设置一个别名，如`typedef unsigned long long uint64;`不过，可能有些不知道，其实using也可以用来设置别名，在这种情况下，它与typedef所表述的意思没有区别。
 
 C++编译器不支持使用typedef关键词为模板类设置别名，但是使用using的方式声明一个关键词却是允许的，只是这个是C++11标准才有的，如果在编译时不加上--std=c++11使用新的标准的话，编译器一样会报错。
+
+## Chapter 14 重载运算符和类型转换
+
+### 基本概念
+
+重载运算符也包括返回类型/参数列表/函数体.
+
+* 当一个重载的运算符函数是成员函数,`this`绑定到左侧运算对象.成员运算符函数的(显式)参数数量比运算对象的数量少一个.
+* 成员函数通过一个`this`的额外的隐式参数来访问调用他的那个对象.当我们调用一个成员函数时,用请求该函数的对象地址初始化`this`.(P231)
+* 不能重定义内置类型做运算符重载.
+* 对于一个重载的运算符来说,其优先级和结合律与对应的内置类型一直.`x==y+z ->x==(y+z)`.
+* 通常情况下,不应该重载逗号,取地址,逻辑与和逻辑或运算符.
+
+##### 使用与内置类型一致的含义
+
++ 如果类执行IO操作,则定义移位运算符使其与内置类型的IO保持一致.
++ 如果类的某个操作是检查相等性,则定义`operator==`;且也应该定义`operator!=`.同理,`>`.`<`.
++ 逻辑运算符和关系运算符应该返回`bool`,算术运算符应该返回一个类类型的值,**赋值运算符和复合运算符`+=`应该返回左侧运算对象的一个引用.**
+
+##### 赋值和复合赋值运算符
+
+当我们定义重载运算符时,必须首先决定是将其声明为类的成员函数还是非成员函数.
+
+当我们定义成成员函数时,他的左侧运算对象必须是运算符所属类的一个对象.
+
+```c++
+string s="world";
+string t=s+"!";//OK! 我们可以把一个const char* 加到一个string对象中 //相当于 s.operator+("!")
+string u="hi"+s;//如果+是string的成员,就会产生错误! //相当于 "hi".operator+(s).  ERROR!
+```
+
+因为string将+定义成了普通非成员函数,所以`"hi"+s`等价于`operator+("hi",s).`和任何其他函数调用一样,每个实参都可以被转换成形参类型.
+
++ 赋值(`=`),下标(`[]`),调用(`()`)和成员访问箭头(`->`)运算符必须是成员函数.
++ 复合赋值运算符一般来说应该是成员,但非必须,这一点和赋值运算符略有不同.
++ 递增递减和解引用应该是成员
++ 具有对称性的运算符可能转换任意一端的运算对象,例如算术,相等性,关系和位运算符,通常为普通非成员函数.
+
+### 输入输出运算符
+
+#### 重载输出运算符<<
+
++ 通常情况下,输出运算符的第一形参是一个非常量`ostream`对象的引用.1. 非常量是因为向流写入内容会改变其状态;2.形参是引用是因为我们无法直接复制一个`ostream`对象.
++ 第二个形参一般来说是一个常量的引用,该常量是我们想要打印的类类型.引用是因为我们不希望拷贝实参;常量因为一般不改变其内容.
++ 为了与其他输出运算符保持一致,`operator<<`一般要返回他的`ostream`形参.
+
+```c++
+ostream& operator<<(ostream &os,const Sales_data &item){
+    os<<item.isbn()<<" "<<item.units_sold<<" "<<item.revenue<<" ";
+    return os;
+}
+```
+
+##### 输入输出必须是非成员函数
+
+否则,他们的左侧运算对象将是我们的类的一个对象:
+
+```c++
+Sales_data data;
+data<<cout;//如果operator<< 是Sales_data的成员
+```
+
+**IO运算符通常需要读写非公有数据成员,所以IO运算符一般声明为友元.**
+
+##### 重载输入运算符>>
+
+```c++
+istream& operator>>(istream &is,Sales_data &item){
+    double price;//不需要初始化,我们将先读入数据列到price,再使用它.
+    is>>item.bookNo>>item.units_sold>>price;
+    if(is)//检查
+        item.revenue=item.units_sold*price;
+    else////如果IO发生失败,则将给定的对象赋值空
+        item=Sales_data();
+    return is;
+}
+```
+
+
+
+输入运算符需要检查可能失败的情况,输出不需要.
+
+我们没有逐个检查每个读取操作,而是等读完所有的数据,在使用前一起检查.
+
+### 算术和关系运算符
+
+> 通常我们把算术和关系运算符定义为非成员函数以允许对左侧或右侧的运算对象进行转换．**因为这些运算符一般不需要改变运算对象的状态，所以形参都是常量的引用．**
+
+> 算术运算符通常会计算两个运算对象得到一个新值，这个值有别于任意一个运算对象，常常位于一个局部变量之内，操作完成后返回该局部变量的副本作为其结果．
+
+### 赋值运算符
+
+在拷贝赋值和移动赋值运算符之外，标准库`vector`类还定义了第三种赋值运算符,接受花括号内的元素列表作为参数.
+
+```c++
+class StrVec{
+public:
+    StrVec &operator=(std::initializer_list<std::string>);
+};
+StrVec &operator=(std::initializer_list<std::string> il){
+    //alloc_n_copy分配内存空间并从给定范围内拷贝元素
+    auto data=alloc_n_copy(il.begin(),il.end());
+    free();//销毁对象中的元素并释放内存空间
+    elements=data.first;//更新数据成员使其指向新空间
+    first_free=cap=data.second;
+    return *this;
+}
+```
+
+
+
+赋值运算符必须定义成类的成员,复合赋值运算符通常情况下也应该这样做.这两类运算符都应该返回左侧运算符的引用.
+
+```c++
+Sales_data& Sales_data::operator+=(const Sales_data &rhs){
+    units_sold+=rhs.units_soldl;
+    revenue+=rhs.revenue;
+    return *this;
+}
+```
+
+
+
+### 下标运算符`operator[]`
+
++ 必须是成员函数.
+
++ 如果一个类包含下标运算符,则他通常会定义两个版本:一个返回普通引用.一个是类的常量成员并且返回常量引用.当作用于一个常量对象时,下标运算符返回常量引用以确保我们不会给返回的对象赋值.[C++中的常量对象只能调用常量成员函数](https://blog.csdn.net/gmstart/article/details/7046140)
+
+  ```c++
+  class StrVec{
+  public:
+      std::string& operator[](std::size_t n){return elements[n];}
+      const std::string& operator[](std::size_t n) const{
+          return elements[n];
+      }
+  private:
+      std::string *elemnts;//指向数组首元素的指针
+  }
+  ```
+
+对于常量对象取下标时,不能赋值;对于非常量对象,我们可以赋值.
+
+### 递增和递减运算符
+
+* 建议将其设为成员函数.
+* 定义递增和递减运算符的类应该同时定义前置版本和后置版本.
+
+**回忆:**
+
+首先，单独拿出来说++i和i++，意思都是一样的，就是i=i+1。
+
+如果当做运算符来说，就是`a=i++`或者`a=++i`这样的形式。情况就不一样了。先说`a=i++`，这个运算的意思是先把i的值赋予a，然后在执行`i=i+1`；而`a=++i`，这个的意思是先执行`i=i+1`，然后在把i的值赋予a；
+
+#### 定义前置
+
+为了与内置类型一致,前置应该返回操作后对象的**引用**.
+
+```c++
+class StrBlobPtr{
+public:
+    StrBlobPtr& operator++();//前置
+    StrBlobPtr& operator--();
+    ...
+}
+StrBlobPtr& StrBlobPtr::operator++(){
+    check(curr,"increment past end of StrBlobPtr");//如果curr已经指到容器的末尾位置,则无法递增
+    ++curr;
+    return *this;
+}
+StrBlobPtr& StrBlobPtr::operator--(){
+    --curr;//如果为0,继续减1将无效(无符号数),传给check的是一个非常大的正值
+    check(curr,"increment past begin of StrBlobPtr");
+    return *this;
+}
+```
+
+#### 区分前置和后置运算符
+
+为了解决普通的重载形式无法区分这两种情况.后置版本接受一个额外的(不被使用)`int`类型的形参.
+
+返回值而非引用.
+
+```c++
+class StrBlobPtr{
+public:
+    StrBlobPtr operator++(int);//后置
+    StrBlobPtr operator--(int);
+    ...
+}
+StrBlobPtr StrBlobPtr::operator++(int){
+    StrBlobPtr ret=*this;//此处无需检查有效性,调用前置才需要
+    ++*this;//调用前置,且需要检查有效性
+    return ret;//返回之前记录的状态
+}
+StrBlobPtr StrBlobPtr::operator--(int){
+    StrBlobPtr ret=*this;//此处无需检查有效性,调用前置才需要
+    --*this;
+    return ret;
+}
+```
+
+#####　显式调用后置运算符
+
+```c++
+StrBlobPtr p(a1);
+p.operator++(0);//调用后置
+p.operator++();//调用前置
+```
+
+### 成员访问运算符`*`和`->`
+
+值得注意的是,我们将这两个运算符定义成了`const`成员,????
+
+```c++
+class StrBlobPtr{
+public:
+    std::string& operator*() const{
+        auto p=check(curr,"dereference past end");
+        return (*p)[curr];//(*P)是对象所指的vector
+    }
+    std::string* operator->() const{
+        return & this->operator*();//实际工作委托给解引用
+    }
+```
+
+### 函数调用运算符
+
+> 如果类重载了函数调用运算符,则我们可以像使用函数一样使用该类的对象.因为这样的类同时还能**存储状态**,所以与普通函数相比他们更灵活.
+
+* 函数调用运算符必须是成员函数.一个类可以定义多个不同的调用运算符.
+* 如果类定义了调用运算符,则该类的对象称为`函数对象`.行为像函数一样.
+
+#### lambda是函数对象
+
+```c++
+stable_sort(word.begin(),word.end(),[](const string& a,const string& b){return a.size()<b.size();});
+
+class ShorterString{
+public:
+    bool operator()(const string& s1,const string& s2) const
+    {return s1.size()<s2.size();}
+};
+//用上面的类代替lambda表达式
+stable_sort(word.begin(),word.end(), ShorterString());
+```
+
+默认情况下lambda不能改变他捕获的变量,因此,由lambda产生的类当中的函数调用运算符是一个`const`成员函数.
+
+#### 可调用对象与function
+
+> C++语言中有几种可调用的对象:函数/函数指针/lambda表达式/bind创建的对象(P354)以及重载了函数调用运算符的类.
+
+> 两个不同类型的可调用对象却可能共享相同的**调用形式**,调用形式指明了调用返回类型以及传递给调用的实参类型.一种调用形式对应一个函数类型,例如:
+
+```c++
+int(int,int)//是一个函数类型,他接受两个Int,返回一个int
+```
+
+##### 不同类型可能具有相同的调用形式
+
+```c++
+//普通函数
+int add(int i,int j){return i+j;}
+//lambda,其产生一个未命名的函数对象类
+auto mod=[](int i,int j){return i%j;};
+//函数对象类
+struct divide{
+    int operator()(int i,int j){return i/j;}
+};
+```
+
+都共用一种调用形式.`int(int,int)`.
+
+**函数表**用来存储指向这些可调用对象的"指针".
+
+```c++
+//构建从运算符到函数指针的映射关系,其中函数接受两个int,返回一个int.
+map<string,int(*)(int,int)>binops;
+binops.insert({"+",add});//{"+",add}是一个pair
+```
+
+但是我们不能将mod或者divide存入binops,因为mod不是函数指针,是个lambda表达式,而每个lambda都有自己的类型.不匹配.
+
+##### 标准库function类型
+
+> 我们可以用一个名为`function`的新标准库类型解决上述问题,定义在`functional`头文件中.function是一个模板,创建时必须指明类型.
+
+``` c++
+function<int(int,int)> //表示接受两个int,返回一个int的可调用对象.
+    
+function<int(int,int)> f1=add;
+function<int(int,int)> f2=divide();
+function<int(int,int)> f3=[](int i,int j){return i*j;};
+
+cout<<f1(4,2)<<endl;
+cout<<f2(4,2)<<endl;
+cout<<f3(4,2)<<endl;
+
+//重新定义map
+map<string,function<int(int,int>> binops;
+//我们可以把所有可调用的对象,包括函数指针,lambda或者函数对象在内,都添加到这个map.
+map<string,function<int(int,int)>> binops={
+    {"+",add},
+    {"-",std::minus<int>()},
+    {"/",divide()},
+    {"*",[](int i,int j){return i*j}},
+    {"%",mod}
+};
+binops["+"](10,5);
+binops["-"](10,5);
+binops["/"](10,5);//使用divide
+binops["*"](10,5);//调用lambda函数对象
+binops["%"](10,5);//调用lambda函数对象
+```
+
+
+
+## Chapter 15 面向对象程序设计
+
+### 概述
+
+
 
 
 
