@@ -1,6 +1,6 @@
 * test_int:19: error: stray '\200' in program  
-这个错误是由于使用了中文引号或其他全角符号，还有一种就是有中文的空格（这个不容易观察），需调到顶格处，再用tab即可。
-[http://blog.csdn.net/qq_25827845/article/details/50905263]
+  这个错误是由于使用了中文引号或其他全角符号，还有一种就是有中文的空格（这个不容易观察），需调到顶格处，再用tab即可。
+  [http://blog.csdn.net/qq_25827845/article/details/50905263]
 
 * [编译DSO](http://mp.weixin.qq.com/s?__biz=MzI5MTM1MTQwMw==&mid=2247485263&idx=1&sn=d0d50d674c5b6209c84acb2c4f618e1e&chksm=ec10b94bdb67305de5d5dd484c04d795aaf7657875fb7c83108091ff2617ce4f5f1e544404cd&scene=0#wechat_redirect)
 ```
@@ -17,4 +17,12 @@ make: *** [all] Error 2
 ```
 
 * [error: ‘shared_ptr’ in namespace ‘std’ does not name a type](https://www.cnblogs.com/foohack/p/3997771.html)
-`set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++0x")`
+  `set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++0x")`
+
+* 无法打开U盘,U盘只读.
+
+  ```c
+
+  ```
+
+  ​
