@@ -2300,6 +2300,255 @@ private:
 
 
 
+# Array
+
+## 1. (832)反转图片
+
+>  给定一个二进制矩阵 `A`，我们想先水平翻转图像，然后反转图像并返回结果。
+>
+> 水平翻转图片就是将图片的每一行都进行翻转，即逆序。例如，水平翻转 `[1, 1, 0]` 的结果是 `[0, 1, 1]`。
+>
+> 反转图片的意思是图片中的 `0` 全部被 `1` 替换， `1` 全部被 `0` 替换。例如，反转 `[0, 1, 1]` 的结果是 `[1, 0, 0]`。
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> flipAndInvertImage(vector<vector<int>>& A) {
+        
+        if(A.empty())
+            return A;
+        else
+        {
+            int length=A.size();
+            for(int i=0;i<length;++i)
+            {
+                reverse(A[i].begin(),A[i].end());
+                for(auto &s:A[i])//用引用传递
+                {
+                    s=!s;
+                }
+            }
+            return A;
+            
+        }
+        
+    }
+};
+```
+
+## 2. (867)Transpose Matrix 
+
+Given a matrix `A`, return the transpose of `A`.
+
+The transpose of a matrix is the matrix flipped over it's main diagonal, switching the row and column indices of the matrix.
+
+**Example 1:**
+
+```
+Input: [[1,2,3],[4,5,6],[7,8,9]]
+Output: [[1,4,7],[2,5,8],[3,6,9]]
+```
+
+```c++\
+class Solution {
+public:
+    vector<vector<int>> transpose(vector<vector<int>>& A) {
+        if(A.empty())
+            return A;
+            
+        else
+        {
+            int rows=A[0].size();
+            int cols=A.size();
+            vector<vector<int>> B;
+            B.reserve(rows);
+            for(int i=0;i<rows;++i)
+            {
+                vector<int> vec;
+                vec.reserve(rows);
+                for(int j=0;j<cols;++j)
+                {
+                    vec.push_back(A[j][i]);
+                }
+                B.push_back(vec);
+            }
+            return B;
+        }
+    }
+};
+```
+
+##  3. (16)最接近的三数之和
+
+>  给定一个包括 *n* 个整数的数组 `nums` 和 一个目标值 `target`。找出 `nums` 中的三个整数，使得它们的和与 `target` 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+
+```
+例如，给定数组 nums = [-1，2，1，-4], 和 target = 1.
+
+与 target 最接近的三个数的和为 2. (-1 + 2 + 1 = 2).
+```
+
+```c++
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        int len=nums.size();
+        sort(nums.begin(),nums.end());
+        int res=nums[0]+nums[1]+nums[2];
+        for(int i=0;i<len;++i)
+        {
+            int l=i+1;
+            int h=len-1;
+            while(l<h)
+            {
+                int sum=nums[l]+nums[h]+nums[i];
+                if(sum<target){
+                    if(abs(sum-target)<abs(res-target))
+                        res=sum;
+                    l++;
+                }
+                   
+                else if(sum>target)
+                {
+                    if(abs(sum-target)<abs(res-target))
+                        res=sum;
+                    h--;
+                }
+                else
+                    return target;
+                   
+            } 
+        }
+        return res;
+    }
+};
+```
+
+## 4. (13)三数之和
+
+> 给定一个包含 *n* 个整数的数组 `nums`，判断 `nums` 中是否存在三个元素 *a，b，c ，*使得 *a + b + c =* 0 ？找出所有满足条件且不重复的三元组。
+
+**注意：**答案中不可以包含重复的三元组。
+
+```
+例如, 给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+```
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        set<vector<int>> set_res;
+        vector<vector<int>> res;
+        res.reserve(set_res.size());
+        if(nums.size()<3) return res;;
+        int len=nums.size();
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<len-2;++i)
+        {
+            if (i == 0 || (i > 0 && nums[i] != nums[i-1])) 
+            {
+                int l=i+1;
+                int h=len-1;
+                while(l<h)
+                {
+                    int sum=nums[i]+nums[l]+nums[h];
+                    if(sum<0)
+                        l++;
+                    else if(sum>0)
+                        h--;
+                    else{
+                        vector<int> vec={nums[i],nums[l],nums[h]};
+                        //set_res.insert(vec);
+                        res.push_back(vec);
+                        while((l<h)&&nums[l]==nums[l+1]) l++;
+                        while ((l<h) && nums[h] == nums[h-1]) h--;
+                        l++; h--;
+                    }    
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
+## 5.(18) 四数之和
+
+> 给定一个包含 *n* 个整数的数组 `nums` 和一个目标值 `target`，判断 `nums` 中是否存在四个元素 *a，**b，c* 和 *d* ，使得 *a* + *b* + *c* + *d* 的值与 `target` 相等？找出所有满足条件且不重复的四元组。
+
+**注意：**
+
+答案中不可以包含重复的四元组。
+
+**示例：**
+
+```
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+```
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> res;
+        if(nums.size()<4) return res;
+        int len=nums.size();
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<len-3;++i)
+        {
+            if(i>0&&nums[i]==nums[i-1]) continue;
+            if(nums[0]+nums[1]+nums[2]+nums[3]>target) break;
+            for(int j=i+1;j<len-2;++j)
+            {
+                if((j>i+1)&&(nums[j]==nums[j-1])) continue;
+                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target) break;
+                int l=j+1;
+                int h=len-1;
+                while(l<h){
+                    int sum=nums[i]+nums[j]+nums[l]+nums[h];
+                    if(sum<target){
+                        while(l<h&&nums[l]==nums[l+1]) l++;
+                        l++;
+                    }
+                    else if(sum>target){
+                        while(l<h&&nums[h]==nums[h-1]) h--;
+                        h--;
+                    }
+                    else{
+                        vector<int> vec={nums[i],nums[j],nums[l],nums[h]};
+                        res.push_back(vec);
+                        while(l<h&&nums[h]==nums[h-1]) h--;
+                        while(l<h&&nums[l]==nums[l+1])l++;
+                        l++;h--;
+                    }
+
+                }
+            }
+            //}
+        }
+        return res;
+    }
+    
+};
+```
+
+
+
+
 
 
 
@@ -2746,3 +2995,4 @@ int main()
 `The last character is f`
 
 # std::bitset::to_string
+
