@@ -13,87 +13,97 @@
     - [10. (242. Valid Anagram)](#10-242-valid-anagram)
     - [11. (412. Fizz Buzz)](#11-412-fizz-buzz)
     - [12. (28. Implement strStr())](#12-28-implement-strstr)
-    - [13. (55. 比较字符串-lintcode)](#13-55--lintcode)
+    - [13. (55. 比较字符串-lintcode)](#13-55-%E6%AF%94%E8%BE%83%E5%AD%97%E7%AC%A6%E4%B8%B2-lintcode)
     - [14. (551. Student Attendance Record I)](#14-551-student-attendance-record-i)
     - [15. (459. Repeated Substring Pattern)](#15-459-repeated-substring-pattern)
     - [16. (345. Reverse Vowels of a String)](#16-345-reverse-vowels-of-a-string)
     - [17. (434. Number of Segments in a String)](#17-434-number-of-segments-in-a-string)
-    - [18.(有效的回文字符串)](#18)
-        - [`isalnum()``isspace()`:判断是否为字符或数字/空格](#isalnumisspace)
-        - [`toupper()``tolower()`:转换为大/小写(cctype)](#touppertolower--cctype)
-    - [19.(214. Shortest Palindrome-如何重整使最小回文)](#19214-shortest-palindrome)
+    - [18.(有效的回文字符串)](#18%E6%9C%89%E6%95%88%E7%9A%84%E5%9B%9E%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2)
+        - [`isalnum()``isspace()`:判断是否为字符或数字/空格](#isalnumisspace%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%B8%BA%E5%AD%97%E7%AC%A6%E6%88%96%E6%95%B0%E5%AD%97%E7%A9%BA%E6%A0%BC)
+        - [`toupper()``tolower()`:转换为大/小写(cctype)](#touppertolower%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%A4%A7%E5%B0%8F%E5%86%99cctype)
+    - [19.(214. Shortest Palindrome-如何重整使最小回文)](#19214-shortest-palindrome-%E5%A6%82%E4%BD%95%E9%87%8D%E6%95%B4%E4%BD%BF%E6%9C%80%E5%B0%8F%E5%9B%9E%E6%96%87)
         - [KMP](#kmp)
     - [20. (151 Reverse Words in a String)](#20-151-reverse-words-in-a-string)
-        - [`isspace()`:判断空格函数](#isspace)
+        - [`isspace()`:判断空格函数](#isspace%E5%88%A4%E6%96%AD%E7%A9%BA%E6%A0%BC%E5%87%BD%E6%95%B0)
     - [21. (696. Count Binary Substrings)](#21-696-count-binary-substrings)
-        - [判断连续相同元素的处理](#)
-        - [485. Max Consecutive Ones（3.20）找出最大连续1的个数](#485-max-consecutive-ones3201)
+        - [判断连续相同元素的处理](#%E5%88%A4%E6%96%AD%E8%BF%9E%E7%BB%AD%E7%9B%B8%E5%90%8C%E5%85%83%E7%B4%A0%E7%9A%84%E5%A4%84%E7%90%86)
+        - [485. Max Consecutive Ones（3.20）找出最大连续1的个数](#485-max-consecutive-ones%EF%BC%88320%EF%BC%89%E6%89%BE%E5%87%BA%E6%9C%80%E5%A4%A7%E8%BF%9E%E7%BB%AD1%E7%9A%84%E4%B8%AA%E6%95%B0)
     - [22. (477. Total Hamming Distance)](#22-477-total-hamming-distance)
-        - [注意>>操作不改变实际值](#)
+        - [注意>>操作不改变实际值](#%E6%B3%A8%E6%84%8F%E6%93%8D%E4%BD%9C%E4%B8%8D%E6%94%B9%E5%8F%98%E5%AE%9E%E9%99%85%E5%80%BC)
     - [283. Move Zeroes](#283-move-zeroes)
-        - [`vector`的`remove()`和`fill()`](#vectorremovefill)
-    - [27. Remove Element(也是remove)](#27-remove-elementremove)
-    - [451. Sort Characters By Frequency(3/15)](#451-sort-characters-by-frequency3-15)
-        - [`map`和`unordered_map`区别用法](#mapunordered-map)
-        - [`string1+=string(3, string2)`的用法](#string1string3--string2)
+        - [`vector`的`remove()`和`fill()`](#vector%E7%9A%84remove%E5%92%8Cfill)
+    - [27. Remove Element(也是remove)](#27-remove-element%E4%B9%9F%E6%98%AFremove)
+    - [451. Sort Characters By Frequency(3/15)](#451-sort-characters-by-frequency315)
+        - [`map`和`unordered_map`区别用法](#map%E5%92%8Cunorderedmap%E5%8C%BA%E5%88%AB%E7%94%A8%E6%B3%95)
+        - [`string1+=string(3, string2)`的用法](#string1string3-string2%E7%9A%84%E7%94%A8%E6%B3%95)
     - [347. Top K Frequent Elements](#347-top-k-frequent-elements)
-        - [优先队列的使用(make_pair)](#make-pair)
+        - [优先队列的使用(make_pair)](#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E7%9A%84%E4%BD%BF%E7%94%A8makepair)
     - [692. Top K Frequent Words](#692-top-k-frequent-words)
-        - [优先队列中比较函数的使用](#)
+        - [优先队列中比较函数的使用](#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E4%B8%AD%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8)
     - [23. 532. Third Maximum Number](#23-532-third-maximum-number)
-        - [set的用法](#set)
-- [动态规划(dynamic programming)](#dynamic-programming)
+        - [set的用法](#set%E7%9A%84%E7%94%A8%E6%B3%95)
+- [动态规划(dynamic programming)](#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92dynamic-programming)
     - [1.(397. Integer Replacement)](#1397-integer-replacement)
-- [Backtracing(回溯法)](#backtracing)
-    - [78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)](#78-subsetsbit-manipulation-backtrace-iterative21-3)
-- [位运算、异或的用法（技巧）](#)
-    - [超详细位运算用法-leetcode](#leetcode)
+    - [2. (121)Best Time to Buy and Sell Stock](#2-121best-time-to-buy-and-sell-stock)
+    - [3.(53)最大子序和](#353%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C)
+    - [4.(152. Maximum Product Subarray)](#4152-maximum-product-subarray)
+    - [5. 697. Degree of an Array](#5-697-degree-of-an-array)
+- [Backtracing(回溯法)](#backtracing%E5%9B%9E%E6%BA%AF%E6%B3%95)
+    - [78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)](#78-subsets%E6%B1%82%E6%95%B0%E7%BB%84%E9%87%8C%E6%89%80%E6%9C%89%E7%9A%84%E5%AD%90%E9%9B%86bit-manipulationbacktraceiterative213)
+- [位运算、异或的用法（技巧）](#%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E5%BC%82%E6%88%96%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%88%E6%8A%80%E5%B7%A7%EF%BC%89)
+    - [超详细位运算用法-leetcode](#%E8%B6%85%E8%AF%A6%E7%BB%86%E4%BD%8D%E8%BF%90%E7%AE%97%E7%94%A8%E6%B3%95-leetcode)
     - [`&` tricks](#tricks)
-        - [1. 191.Number of 1 Bits(位1的个数)](#1-191number-of-1-bits1)
-        - [2.是否为4的指数 或 2的指数](#24--2)
-        - [3. 201. Bitwise AND of Numbers Range(难)](#3-201-bitwise-and-of-numbers-range)
+        - [1. 191.Number of 1 Bits(位1的个数)](#1-191number-of-1-bits%E4%BD%8D1%E7%9A%84%E4%B8%AA%E6%95%B0)
+        - [2.是否为4的指数 或 2的指数](#2%E6%98%AF%E5%90%A6%E4%B8%BA4%E7%9A%84%E6%8C%87%E6%95%B0-%E6%88%96-2%E7%9A%84%E6%8C%87%E6%95%B0)
+        - [3. 201. Bitwise AND of Numbers Range(难)](#3-201-bitwise-and-of-numbers-range%E9%9A%BE)
     - [`^` tricks](#tricks)
         - [1. Sum of Two Integers](#1-sum-of-two-integers)
         - [2. 268.Missing Number](#2-268missing-number)
     - [`|` tricks](#tricks)
-        - [找出小于或等于N的最大2的指数](#n2)
+        - [找出小于或等于N的最大2的指数](#%E6%89%BE%E5%87%BA%E5%B0%8F%E4%BA%8E%E6%88%96%E7%AD%89%E4%BA%8En%E7%9A%84%E6%9C%80%E5%A4%A72%E7%9A%84%E6%8C%87%E6%95%B0)
         - [190.Reverse Bits](#190reverse-bits)
-    - [其他位运算技巧](#)
+    - [其他位运算技巧](#%E5%85%B6%E4%BB%96%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7)
     - [136. Single Number](#136-single-number)
     - [389. Find the Difference](#389-find-the-difference)
     - [80. Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array-ii)
-- [二分查找](#)
-    - [二分法注意事项:](#)
-    - [二分法总结案例](#)
-    - [349. Intersection of Two Arrays(交集)](#349-intersection-of-two-arrays)
-        - [学习`set`和`unordered_set`的`初始化`与`插入`。](#setunordered-set)
+- [二分查找](#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE)
+    - [二分法注意事项:](#%E4%BA%8C%E5%88%86%E6%B3%95%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+    - [二分法总结案例](#%E4%BA%8C%E5%88%86%E6%B3%95%E6%80%BB%E7%BB%93%E6%A1%88%E4%BE%8B)
+    - [349. Intersection of Two Arrays(交集)](#349-intersection-of-two-arrays%E4%BA%A4%E9%9B%86)
+        - [学习`set`和`unordered_set`的`初始化`与`插入`。](#%E5%AD%A6%E4%B9%A0set%E5%92%8Cunorderedset%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E6%8F%92%E5%85%A5%E3%80%82)
     - [350. Intersection of Two Arrays II](#350-intersection-of-two-arrays-ii)
     - [167. Two Sum II - Input array is sorted](#167-two-sum-ii---input-array-is-sorted)
     - [744. Find Smallest Letter Greater Than Target](#744-find-smallest-letter-greater-than-target)
-    - [153. 寻找旋转排序数组中的最小值](#153)
-    - [154. Find Minimum in Rotated Sorted Array II(含有重复数)](#154-find-minimum-in-rotated-sorted-array-ii)
+    - [153. 寻找旋转排序数组中的最小值](#153-%E5%AF%BB%E6%89%BE%E6%97%8B%E8%BD%AC%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9C%80%E5%B0%8F%E5%80%BC)
+    - [154. Find Minimum in Rotated Sorted Array II(含有重复数)](#154-find-minimum-in-rotated-sorted-array-ii%E5%90%AB%E6%9C%89%E9%87%8D%E5%A4%8D%E6%95%B0)
     - [33. Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
-    - [35. Search Insert Position(区间和算法区间一致)](#35-search-insert-position)
-    - [34. 搜索范围](#34)
-    - [74. 搜索二维矩阵](#74)
-- [树](#)
-    - [广度优先搜索(层次遍历)](#)
-        - [111. Minimum Depth of Binary Tree（找二叉树的最小深度）](#111-minimum-depth-of-binary-tree)
+    - [35. Search Insert Position(区间和算法区间一致)](#35-search-insert-position%E5%8C%BA%E9%97%B4%E5%92%8C%E7%AE%97%E6%B3%95%E5%8C%BA%E9%97%B4%E4%B8%80%E8%87%B4)
+    - [34. 搜索范围](#34-%E6%90%9C%E7%B4%A2%E8%8C%83%E5%9B%B4)
+    - [74. 搜索二维矩阵](#74-%E6%90%9C%E7%B4%A2%E4%BA%8C%E7%BB%B4%E7%9F%A9%E9%98%B5)
+- [Array](#array)
+    - [1. (832)反转图片](#1-832%E5%8F%8D%E8%BD%AC%E5%9B%BE%E7%89%87)
+    - [2. (867)Transpose Matrix](#2-867transpose-matrix)
+    - [3. (16)最接近的三数之和](#3-16%E6%9C%80%E6%8E%A5%E8%BF%91%E7%9A%84%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C)
+    - [4. (13)三数之和](#4-13%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C)
+    - [5.(18) 四数之和](#518-%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C)
+- [树](#%E6%A0%91)
+    - [广度优先搜索(层次遍历)](#%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2%E5%B1%82%E6%AC%A1%E9%81%8D%E5%8E%86)
+        - [111. Minimum Depth of Binary Tree（找二叉树的最小深度）](#111-minimum-depth-of-binary-tree%EF%BC%88%E6%89%BE%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6%EF%BC%89)
         - [104. Maximum Depth of Binary Tree](#104-maximum-depth-of-binary-tree)
         - [111. Minimum Depth of Binary Tree](#111-minimum-depth-of-binary-tree)
-        - [102. Binary Tree Level Order Traversal(二叉树的层序遍历)](#102-binary-tree-level-order-traversal)
-            - [`vector`的`reserve`用法，](#vectorreserve)
+        - [102. Binary Tree Level Order Traversal(二叉树的层序遍历)](#102-binary-tree-level-order-traversal%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86)
+            - [`vector`的`reserve`用法，](#vector%E7%9A%84reserve%E7%94%A8%E6%B3%95%EF%BC%8C)
         - [226. Invert Binary Tree](#226-invert-binary-tree)
         - [112. Path Sum](#112-path-sum)
-- [贪心算法](#)
-    - [11. 盛最多水的容器](#11)
-- [报错](#)
-- [常用算法函数](#)
-    - [`std::accumulate`定义于头文件 `<numeric>`](#std--accumulate-numeric)
-        - [`std::next` 定义于头文件`<iterator>`](#std--next-iterator)
-        - [`std::multiplies`:乘](#std--multiplies)
-    - [`std::vector::back`](#std--vector--back)
-- [std::bitset::to_string](#std--bitset--to-string)
+- [贪心算法](#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95)
+    - [11. 盛最多水的容器](#11-%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8)
+- [报错](#%E6%8A%A5%E9%94%99)
+- [常用算法函数](#%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95%E5%87%BD%E6%95%B0)
+    - [`std::accumulate`定义于头文件 `<numeric>`](#stdaccumulate%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6-numeric)
+        - [`std::next` 定义于头文件`<iterator>`](#stdnext-%E5%AE%9A%E4%B9%89%E4%BA%8E%E5%A4%B4%E6%96%87%E4%BB%B6iterator)
+        - [`std::multiplies`:乘](#stdmultiplies%E4%B9%98)
+    - [`std::vector::back`](#stdvectorback)
+- [std::bitset::to_string](#stdbitsettostring)
 
 <!-- /TOC -->
 # String 
@@ -1380,6 +1390,218 @@ public:
     }
 };
 ```
+## 2. (121)Best Time to Buy and Sell Stock
+
+> 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。
+
+> 注意你不能在买入股票前卖出股票。
+
+示例 1:
+
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+
+
+```c
+// class Solution {
+// public:
+//     int maxProfit(vector<int>& prices) {
+//         if(prices.size()<2)
+//             return 0;
+//         int cur_pro=prices[1]-prices[0];
+//         int total_pro=prices[1]-prices[0];
+//         for(int i=1;i<prices.size()-1;++i)
+//         {
+//            int del=prices[i+1]-prices[i];
+//             cur_pro=max(del,cur_pro+del);
+//             total_pro=max(cur_pro,total_pro);
+//         }
+//         if(total_pro<0) return 0;
+//         return total_pro;
+            
+//     }
+// };
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int minprice = INT_MAX;
+        int maxprofit = 0;
+        for (int i = 0; i < prices.size(); i++) {  
+            if (prices[i] < minprice) {
+                minprice = prices[i];
+            } else if (prices[i] - minprice > maxprofit) {
+                maxprofit = prices[i] - minprice;
+            }
+        }
+        
+        return maxprofit;
+    }
+};
+```
+
+## 3.(53)最大子序和
+> 给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+示例:
+
+```
+输入: [-2,1,-3,4,-1,2,1,-5,4],
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+```
+
+```c
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        
+        int currentSum =nums[0], totalSum = nums[0];
+        
+        for(int i=1; i<nums.size(); i++) {
+
+            //Current max sum is either the current element OR current element + Previous Maximum subarray)
+            currentSum = max(nums[i], currentSum+nums[i]); 
+            
+            //If the current maximum array sum is greater than the global total. Update it
+            totalSum = max(totalSum, currentSum);
+    }
+        return totalSum;
+    }
+};
+
+//Method2
+// int maxSubArray(vector<int>& nums) {
+        
+//         int currentSum = 0, totalSum = INT_MIN;
+        
+//         for(int i=0; i<nums.size(); i++) {
+            
+//             //Sum till this point ======= Current Sum till this point + this element
+//             currentSum = currentSum + nums[i]; 
+            
+//             //If the current maximum array sum is greater than the global total. Update it
+//             totalSum = max(totalSum, currentSum);
+            
+//             //If you get current as less thn 0 then its no point in carrying forward. Make it 0
+//             currentSum = max(0,currentSum);
+//     }
+//         return totalSum;
+//     }
+```
+
+## 4.(152. Maximum Product Subarray)
+
+> Given an integer array nums, find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+Example 1:
+
+```
+Input: [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+```
+```c
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+         // store the result that is the max we have found so far
+    int r = nums[0];
+
+    // imax/imin stores the max/min product of
+    // subarray that ends with the current number A[i]
+    for (int i = 1, imax = r, imin = r; i < nums.size(); i++) {
+        // multiplied by a negative makes big number smaller, small number bigger
+        // so we redefine the extremums by swapping them
+        if (nums[i] < 0)
+            swap(imax, imin);
+
+        // max/min product for the current number is either the current number itself
+        // or the max/min by the previous number times the current one
+        imax = max(nums[i], imax * nums[i]);
+        imin = min(nums[i], imin * nums[i]);
+
+        // the newly computed max value is a candidate for our global result
+        r = max(r, imax);
+    }
+    return r;
+}
+};
+
+```
+
+## 5. 697. Degree of an Array
+
+> 给定一个非空且只包含非负数的整数数组 nums, 数组的度的定义是指数组里任一元素出现频数的最大值。
+> 你的任务是找到与 nums 拥有相同大小的度的最短连续子数组，返回其长度。
+
+示例 1:
+```
+输入: [1, 2, 2, 3, 1]
+输出: 2
+解释: 
+输入数组的度是2，因为元素1和2的出现频数最大，均为2.
+连续子数组里面拥有相同度的有如下所示:
+[1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
+最短连续子数组[2, 2]的长度为2，所以返回2.
+```
+
+```c
+// class Solution {
+// public:
+//     int findShortestSubArray(vector<int>& nums) {
+//         unordered_map<int,int>map;
+//         int degree=0;
+//         vector<int> vec;
+//         for(auto s:nums) map[s]++;
+//         for(auto s:map) 
+//             degree=max(degree,s.second);
+//         for(auto s:map){
+//             if(s.second==degree) vec.push_back(s.first);
+//         }
+//         int len=100000;
+//         for(auto s:vec)
+//         {
+//             int k=0;
+//             vector<int> res;
+//             res.resize(degree);
+//             for(int i=0;i<nums.size();++i)
+//             {
+//                 if(s==nums[i])
+//                     res[k++]=i;
+//             }
+//             int len_res=res[degree-1]-res[0]+1;
+//             len=min(len,len_res);
+//         }    
+//         return len;    
+        
+            
+//     }
+// };
+
+class Solution {
+public:
+    int findShortestSubArray(vector<int>& nums) {
+        unordered_map<int,vector<int>>map;
+        int degree=0;
+        for(int i=0;i<nums.size();++i) map[nums[i]].push_back(i);
+        for(auto s:map)
+            degree=max(degree,(int)(s.second.size()));
+        int len=100000;
+        for(auto s:map){
+            if(s.second.size()==degree){
+                len=min(len,s.second[degree-1]-s.second[0]+1);
+            }
+                
+        }
+        return len;    
+                
+        }   
+};
+```
+
 # Backtracing(回溯法)
 
 ## 78. Subsets(求数组里所有的子集(Bit Manipulation/Backtrace/Iterative))(21/3)
