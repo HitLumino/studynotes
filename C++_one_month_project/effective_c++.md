@@ -210,3 +210,39 @@ ch = ‘A’;
 上述的例外情况是函数的参数或返回值需要一个“临界”的引用时。这时通常最好返回/获取一个指针，并使用 NULL 指针来完成这个特殊的使命。(引用应该总是对象的别名，而不是被解除引用的 NULL 指针)。
 
 注意：由于在调用者的代码处，无法提供清晰的的引用语义，所以传统的 C 程序员有时并不喜欢引用。然而，当有了一些 C++ 经验后，你会很快认识到这是信息隐藏的一种形式，它是有益的而不是有害的。就如同，程序员应该针对要解决的问题写代码，而不是机器本身。
+
+### item 07:为多态基类声明vitual析构函数
+
+```c++
+class TimeKeeper{
+public:
+    TimeKeeper()=default;
+    virtual ~TimeKeeper()=default;
+};
+class AtomiClock:public TimeKeeper{
+}
+class WaterClock:public TimeKeeper{
+}
+class WristClock:public TimeKeeper{
+}
+class Factory{
+public:
+    virtual TimeKeeper* getTimeKeeper()=0;
+}
+class AtomiFactory:public Factory{
+    TimeKeeper* getTimeKeeper(){
+        return new AtomiClock;
+    }
+}
+class WaterFactory:public Factory{
+    TimeKeeper* getTimeKeeper(){
+        return new WaterClock;
+    }
+}
+class WristFactory:public Factory{
+    TimeKeeper* getTimeKeeper(){
+        return new WristClock;
+    }
+}
+```
+
